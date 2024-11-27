@@ -1,0 +1,12 @@
+[submodule "ImageConverterFFMPEG/deps/Lunaris/process"]
+	path = ImageConverterFFMPEG/deps/Lunaris/process
+	url = https://www.github.com/LunarisLib/Lunaris-Process
+[submodule "ImageConverterFFMPEG/deps/Lunaris/console"]
+	path = ImageConverterFFMPEG/deps/Lunaris/console
+	url = https://www.github.com/LunarisLib/Lunaris-Console
+[submodule "ImageConverterFFMPEG/deps/Lunaris/downloader"]
+	path = ImageConverterFFMPEG/deps/Lunaris/downloader
+	url = https://www.github.com/LunarisLib/Lunaris-Downloader
+[submodule "ImageConverterFFMPEG/deps/Lunaris/socket"]
+	path = ImageConverterFFMPEG/deps/Lunaris/socket
+	url = https://www.github.com/LunarisLib/Lunaris-Socket
