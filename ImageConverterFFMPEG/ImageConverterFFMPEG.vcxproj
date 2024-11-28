@@ -158,10 +158,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ffmpeg.cpp" />
+    <ClCompile Include="files.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="parameters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ffmpeg.h" />
+    <ClInclude Include="files.h" />
+    <ClInclude Include="parameters.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

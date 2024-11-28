@@ -5,15 +5,33 @@
     <ClCompile Include="ffmpeg.cpp">
       <Filter>ffmpeg</Filter>
     </ClCompile>
+    <ClCompile Include="files.cpp">
+      <Filter>files</Filter>
+    </ClCompile>
+    <ClCompile Include="parameters.cpp">
+      <Filter>parameters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ffmpeg">
       <UniqueIdentifier>{3da02d50-7aac-4328-830e-7122787f7589}</UniqueIdentifier>
     </Filter>
+    <Filter Include="files">
+      <UniqueIdentifier>{f15e1603-f6ed-4c2d-930c-de2d9bdb8641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parameters">
+      <UniqueIdentifier>{caf59a5c-52c8-4b55-a77c-67b0535c65a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ffmpeg.h">
       <Filter>ffmpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="files.h">
+      <Filter>files</Filter>
+    </ClInclude>
+    <ClInclude Include="parameters.h">
+      <Filter>parameters</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
