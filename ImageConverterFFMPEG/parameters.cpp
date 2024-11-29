@@ -2,6 +2,8 @@
 
 #include <Lunaris/console/console.h>
 
+#include <algorithm>
+
 const std::string NVENC_parameters::m_preset_values[] = {
 	"default", "slow", "medium", "fast", "hp", "hq", "bd",
 	"ll", "llhq", "llhp", "lossless", "losslesshp", "p1",
@@ -61,7 +63,7 @@ VideoParameters& VideoParameters::set_maxres(const int v)
 
 
 
-std::vector<std::string> NVENC_parameters::to_ffmpeg_props() const
+std::vector<std::string> NVENC_parameters::to_ffmpeg_props(const std::string& input) const
 {
 	std::vector<std::string> vec;
 
@@ -69,9 +71,10 @@ std::vector<std::string> NVENC_parameters::to_ffmpeg_props() const
 	vec.push_back("-loglevel");			vec.push_back("error");
 	vec.push_back("-y");
 	vec.push_back("-i");
+	vec.push_back("\"" + input + "\"");
 
-	vec.push_back("-hwaccel");					vec.push_back("cuda");
-	vec.push_back("-hwaccel_output_format");	vec.push_back("cuda");
+	//vec.push_back("-hwaccel");					vec.push_back("cuda");
+	//vec.push_back("-hwaccel_output_format");	vec.push_back("cuda");
 
 	vec.push_back("-vcodec");					vec.push_back("hevc_nvenc");
 	vec.push_back("-vsync");					vec.push_back("0");
@@ -118,6 +121,51 @@ std::vector<std::string> NVENC_parameters::to_ffmpeg_props() const
 	return vec;
 }
 
+std::vector<std::string> NVENC_parameters::to_pretty_lines() const
+{
+	std::vector<std::string> vec;
+
+	vec.push_back("Video codec: hevc_nvenc");
+	//vec.push_back("Hardware accel: cuda");
+
+	if (m_mix)	vec.push_back("Audio config: downsample 5.1");
+	else		vec.push_back("Audio config: original");
+
+	if (m_audio_bitrate.has_value())	vec.push_back("Audio bitrate: " + std::to_string(m_audio_bitrate.value()) + "k");
+	else								vec.push_back("Audio bitrate: undefined");
+
+	if (m_preset.has_value())			vec.push_back("Preset: " + m_preset.value());
+	else								vec.push_back("Preset: undefined");
+
+	if (m_tune.has_value())				vec.push_back("Tune: " + m_tune.value());
+	else								vec.push_back("Tune: undefined");
+
+	if (m_profile.has_value())			vec.push_back("Profile: " + m_profile.value());
+	else								vec.push_back("Profile: undefined");
+
+	if (m_cqp.has_value())				vec.push_back("Constant of quality: " + std::to_string(m_cqp.value()));
+	else								vec.push_back("Constant of quality: undefined");
+
+	if (m_scale.has_value()) {
+		const float v = m_scale.value();
+
+		char buf[64]{};
+
+		if (v < 1.0f) {
+			snprintf(buf, std::size(buf), "Scale: %.3f", v);
+		}
+		else {
+			const int c = static_cast<int>(v);
+			snprintf(buf, std::size(buf), "Shorter side length: %d pixel(s)", c);
+		}
+
+		vec.push_back(buf);
+	}
+	else vec.push_back("Scale/Shorter side length: undefined");
+
+	return vec;
+}
+
 NVENC_parameters& NVENC_parameters::set_preset(const std::string& v)
 {
 	if (std::find(std::begin(m_preset_values), std::end(m_preset_values), v) == std::end(m_preset_values)) m_preset.reset();
@@ -153,7 +201,7 @@ NVENC_parameters& NVENC_parameters::set_maxres(const int v) { this->VideoParamet
 
 
 
-std::vector<std::string> x264_parameters::to_ffmpeg_props() const
+std::vector<std::string> x264_parameters::to_ffmpeg_props(const std::string& input) const
 {
 	std::vector<std::string> vec;
 
@@ -161,6 +209,7 @@ std::vector<std::string> x264_parameters::to_ffmpeg_props() const
 	vec.push_back("-loglevel");			vec.push_back("error");
 	vec.push_back("-y");
 	vec.push_back("-i");
+	vec.push_back("\"" + input + "\"");
 
 	vec.push_back("-vcodec");			vec.push_back("libx264");
 	vec.push_back("-vsync");			vec.push_back("0");
@@ -202,6 +251,44 @@ std::vector<std::string> x264_parameters::to_ffmpeg_props() const
 	return vec;
 }
 
+std::vector<std::string> x264_parameters::to_pretty_lines() const
+{
+	std::vector<std::string> vec;
+
+	vec.push_back("Video codec: libx264");
+
+	if (m_mix)	vec.push_back("Audio config: downsample 5.1");
+	else		vec.push_back("Audio config: original");
+	
+	if (m_audio_bitrate.has_value())	vec.push_back("Audio bitrate: " + std::to_string(m_audio_bitrate.value()) + "k");
+	else								vec.push_back("Audio bitrate: undefined");
+
+	if (m_preset.has_value())			vec.push_back("Preset: " + m_preset.value());
+	else								vec.push_back("Preset: undefined");
+
+	if (m_cqp.has_value())				vec.push_back("Constant of quality: " + std::to_string(m_cqp.value()));
+	else								vec.push_back("Constant of quality: undefined");
+
+	if (m_scale.has_value()) {
+		const float v = m_scale.value();
+
+		char buf[64]{};
+
+		if (v < 1.0f) {
+			snprintf(buf, std::size(buf), "Scale: %.3f", v);
+		}
+		else {
+			const int c = static_cast<int>(v);
+			snprintf(buf, std::size(buf), "Shorter side length: %d pixel(s)", c);
+		}
+
+		vec.push_back(buf);
+	}
+	else vec.push_back("Scale/Shorter side length: undefined");
+
+	return vec;
+}
+
 x264_parameters& x264_parameters::set_preset(const std::string& v)
 {
 	if (std::find(std::begin(m_preset_values), std::end(m_preset_values), v) == std::end(m_preset_values)) m_preset.reset();
@@ -221,16 +308,51 @@ x264_parameters& x264_parameters::set_audio_bitrate(const int v) { this->VideoPa
 x264_parameters& x264_parameters::set_scale(const float v) { this->VideoParameters::set_scale(v); return *this; }
 x264_parameters& x264_parameters::set_maxres(const int v) { this->VideoParameters::set_maxres(v); return *this; }
 
-std::vector<std::string> JPEG_parameters::to_ffmpeg_props() const
+JPEG_parameters::JPEG_parameters()
+{
+	set_cqp(5);
+}
+
+std::vector<std::string> JPEG_parameters::to_ffmpeg_props(const std::string& input) const
 {
 	std::vector<std::string> vec;
 
 	vec.push_back("-hide_banner");
 	vec.push_back("-loglevel");			vec.push_back("error");
 	vec.push_back("-y");
-	vec.push_back("-i");
 
-	if (m_cqp.has_value())	{ vec.push_back("-q:v");	vec.push_back(std::to_string(m_cqp.value())); }
+	vec.push_back("-vsync");			vec.push_back("0");
+
+	std::string lowered(input.size(), '\0');
+	std::transform(input.begin(), input.end(), lowered.begin(), [](unsigned char c) { return std::tolower(c); });
+
+	if (lowered.find(".heic") == lowered.size() - 5 || lowered.find(".heif") == lowered.size() - 5) {
+		vec.push_back("-c:v");
+		vec.push_back("hevc");
+		vec.push_back("-i");
+		vec.push_back("\"" + input + "\"");
+		vec.push_back("-map");
+		vec.push_back("0:1");
+	}
+	else {
+		vec.push_back("-i");
+		vec.push_back("\"" + input + "\"");
+	}
+
+	//vec.push_back("-vf");
+	//vec.push_back("\"tile=8x6:48:0:0:blue\"");
+
+	if (m_cqp.has_value()) { vec.push_back("-q:v");	vec.push_back(std::to_string(m_cqp.value())); }
+
+	return vec;
+}
+
+std::vector<std::string> JPEG_parameters::to_pretty_lines() const
+{
+	std::vector<std::string> vec;
+
+	if (m_cqp.has_value())	vec.push_back("Quality: " + std::to_string(m_cqp.value()));
+	else					vec.push_back("Quality: undefined");
 
 	return vec;
 }
