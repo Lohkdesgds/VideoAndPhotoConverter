@@ -63,7 +63,7 @@ VideoParameters& VideoParameters::set_maxres(const int v)
 
 
 
-std::vector<std::string> NVENC_parameters::to_ffmpeg_props(const std::string& input) const
+std::vector<std::string> NVENC_parameters::to_props(const std::string& input) const
 {
 	std::vector<std::string> vec;
 
@@ -201,7 +201,7 @@ NVENC_parameters& NVENC_parameters::set_maxres(const int v) { this->VideoParamet
 
 
 
-std::vector<std::string> x264_parameters::to_ffmpeg_props(const std::string& input) const
+std::vector<std::string> x264_parameters::to_props(const std::string& input) const
 {
 	std::vector<std::string> vec;
 
@@ -310,39 +310,16 @@ x264_parameters& x264_parameters::set_maxres(const int v) { this->VideoParameter
 
 JPEG_parameters::JPEG_parameters()
 {
-	set_cqp(5);
+	set_cqp(40);
 }
 
-std::vector<std::string> JPEG_parameters::to_ffmpeg_props(const std::string& input) const
+std::vector<std::string> JPEG_parameters::to_props(const std::string& input) const
 {
 	std::vector<std::string> vec;
 
-	vec.push_back("-hide_banner");
-	vec.push_back("-loglevel");			vec.push_back("error");
-	vec.push_back("-y");
-
-	vec.push_back("-vsync");			vec.push_back("0");
-
-	std::string lowered(input.size(), '\0');
-	std::transform(input.begin(), input.end(), lowered.begin(), [](unsigned char c) { return std::tolower(c); });
-
-	if (lowered.find(".heic") == lowered.size() - 5 || lowered.find(".heif") == lowered.size() - 5) {
-		vec.push_back("-c:v");
-		vec.push_back("hevc");
-		vec.push_back("-i");
-		vec.push_back("\"" + input + "\"");
-		vec.push_back("-map");
-		vec.push_back("0:1");
-	}
-	else {
-		vec.push_back("-i");
-		vec.push_back("\"" + input + "\"");
-	}
-
-	//vec.push_back("-vf");
-	//vec.push_back("\"tile=8x6:48:0:0:blue\"");
-
-	if (m_cqp.has_value()) { vec.push_back("-q:v");	vec.push_back(std::to_string(m_cqp.value())); }
+	vec.push_back("\"" + input + "\"");
+	
+	if (m_cqp.has_value()) { vec.push_back("-quality");		vec.push_back(std::to_string(m_cqp.value()) + "%"); }
 
 	return vec;
 }
@@ -351,7 +328,7 @@ std::vector<std::string> JPEG_parameters::to_pretty_lines() const
 {
 	std::vector<std::string> vec;
 
-	if (m_cqp.has_value())	vec.push_back("Quality: " + std::to_string(m_cqp.value()));
+	if (m_cqp.has_value())	vec.push_back("Quality: " + std::to_string(m_cqp.value()) + "%");
 	else					vec.push_back("Quality: undefined");
 
 	return vec;
@@ -359,7 +336,7 @@ std::vector<std::string> JPEG_parameters::to_pretty_lines() const
 
 JPEG_parameters& JPEG_parameters::set_cqp(const int v)
 {
-	if (v < 2 || v > 31) m_cqp.reset();
+	if (v < 1 || v > 100) m_cqp.reset();
 	else m_cqp = v;
 	return *this;
 }

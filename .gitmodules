@@ -10,3 +10,6 @@
 [submodule "ImageConverterFFMPEG/deps/Lunaris/socket"]
 	path = ImageConverterFFMPEG/deps/Lunaris/socket
 	url = https://www.github.com/LunarisLib/Lunaris-Socket
+[submodule "ImageConverterFFMPEG/deps/nlohmann/json"]
+	path = ImageConverterFFMPEG/deps/nlohmann/json
+	url = https://www.github.com/nlohmann/json

@@ -71,16 +71,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ExternalIncludePath>$(SolutionDir)ImageConverterFFMPEG\deps;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)ImageConverterFFMPEG\deps;$(SolutionDir)ImageConverterFFMPEG\deps\nlohmann\json\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ExternalIncludePath>$(SolutionDir)ImageConverterFFMPEG\deps;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)ImageConverterFFMPEG\deps;$(SolutionDir)ImageConverterFFMPEG\deps\nlohmann\json\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ExternalIncludePath>$(SolutionDir)ImageConverterFFMPEG\deps;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)ImageConverterFFMPEG\deps;$(SolutionDir)ImageConverterFFMPEG\deps\nlohmann\json\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ExternalIncludePath>$(SolutionDir)ImageConverterFFMPEG\deps;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)ImageConverterFFMPEG\deps;$(SolutionDir)ImageConverterFFMPEG\deps\nlohmann\json\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -159,13 +159,17 @@
   <ItemGroup>
     <ClCompile Include="ffmpeg.cpp" />
     <ClCompile Include="files.cpp" />
+    <ClCompile Include="imagemagick.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parameters.cpp" />
+    <ClCompile Include="shared.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ffmpeg.h" />
     <ClInclude Include="files.h" />
+    <ClInclude Include="imagemagick.h" />
     <ClInclude Include="parameters.h" />
+    <ClInclude Include="shared.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -11,6 +11,12 @@
     <ClCompile Include="parameters.cpp">
       <Filter>parameters</Filter>
     </ClCompile>
+    <ClCompile Include="imagemagick.cpp">
+      <Filter>ImageMagick</Filter>
+    </ClCompile>
+    <ClCompile Include="shared.cpp">
+      <Filter>shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ffmpeg">
@@ -22,6 +28,12 @@
     <Filter Include="parameters">
       <UniqueIdentifier>{caf59a5c-52c8-4b55-a77c-67b0535c65a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ImageMagick">
+      <UniqueIdentifier>{0de13379-b32d-4646-8347-390d537ec983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shared">
+      <UniqueIdentifier>{497d79d6-632d-4c66-b43d-9917b4c9888f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ffmpeg.h">
@@ -32,6 +44,12 @@
     </ClInclude>
     <ClInclude Include="parameters.h">
       <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="imagemagick.h">
+      <Filter>ImageMagick</Filter>
+    </ClInclude>
+    <ClInclude Include="shared.h">
+      <Filter>shared</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

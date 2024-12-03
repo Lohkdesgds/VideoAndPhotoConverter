@@ -9,8 +9,10 @@ const std::string image_ext[] = {
 const std::string video_ext[] = {
 	"mp4", "avi", "mov", "mkv", "flv", "webm", "mpeg", "asf", "ogv", "mxf"
 };
-const std::string image_final_format = "png";
+const std::string image_final_format = "jpg";
 const std::string video_final_format = "mp4";
+
+constexpr char common_converted_end_filter[] = "_conv.";
 
 bool is_image(const std::string& file_name)
 {
@@ -32,24 +34,9 @@ bool is_video(const std::string& file_name)
 	return false;
 }
 
-File::File(const std::string& path, const FFMPEG& ffmpeg, const std::shared_ptr<std::unique_ptr<Parameters>>& parameters, const std::string& extension)
-	: m_ffmpeg(ffmpeg), m_path(path), m_parameters(parameters), m_ext(extension)
+File::File(const std::string& path, const std::shared_ptr<std::unique_ptr<Parameters>>& parameters, const std::string& extension)
+	: m_path(path), m_parameters(parameters), m_ext(extension)
 {
-}
-
-void File::convert() const
-{
-	std::vector<std::string> params;
-		
-	auto extra = (*m_parameters)->to_ffmpeg_props(m_path);
-
-	params.insert(params.end(), std::move_iterator(extra.begin()), std::move_iterator(extra.end()));
-
-	params.push_back("\"" + m_path + "_conv." + m_ext + "\"");
-
-	m_ffmpeg.call(std::initializer_list<std::string>(params.data(), params.data() + params.size()), [&](const std::string& l) {
-		printf_s("FFMPEG: %s\n", l.c_str());
-	});
 }
 
 const std::string& File::get_path() const
@@ -58,11 +45,95 @@ const std::string& File::get_path() const
 }
 
 VideoFile::VideoFile(const std::string& path, const FFMPEG& ffmpeg, const std::shared_ptr<std::unique_ptr<Parameters>>& parameters)
-	: File(path, ffmpeg, parameters, video_final_format)
+	: File(path, parameters, video_final_format), m_ffmpeg(ffmpeg)
 {
 }
 
-ImageFile::ImageFile(const std::string& path, const FFMPEG& ffmpeg, const std::shared_ptr<std::unique_ptr<Parameters>>& parameters)
-	: File(path, ffmpeg, parameters, image_final_format)
+void VideoFile::convert() const
+{
+	std::vector<std::string> params;
+		
+	auto extra = (*m_parameters)->to_props(m_path);
+
+	params.insert(params.end(), std::move_iterator(extra.begin()), std::move_iterator(extra.end()));
+
+	params.push_back("\"" + m_path + common_converted_end_filter + m_ext + "\"");
+
+	m_ffmpeg.call(std::initializer_list<std::string>(params.data(), params.data() + params.size()), [&](const std::string& l) {
+		printf_s("FFMPEG: %s\n", l.c_str());
+	});
+}
+
+bool VideoFile::probably_a_converted_file() const
+{
+	const auto exp_end = common_converted_end_filter + m_ext;
+	const size_t p = m_path.rfind(exp_end);
+	return p != std::string::npos && p + exp_end.size() == m_path.size();
+}
+
+bool VideoFile::is_video() const
+{
+	return true;
+}
+
+bool VideoFile::is_image() const
+{
+	return false;
+}
+
+ImageFile::ImageFile(const std::string& path, const MAGICK& magick, const std::shared_ptr<std::unique_ptr<Parameters>>& parameters)
+	: File(path, parameters, image_final_format), m_magick(magick)
 {
 }
+
+void ImageFile::convert() const
+{
+	std::vector<std::string> params;
+		
+	auto extra = (*m_parameters)->to_props(m_path);
+
+	params.insert(params.end(), std::move_iterator(extra.begin()), std::move_iterator(extra.end()));
+
+	params.push_back("\"" + m_path + common_converted_end_filter + m_ext + "\"");
+
+	m_magick.call(std::initializer_list<std::string>(params.data(), params.data() + params.size()), [&](const std::string& l) {
+		printf_s("MAGICK: %s\n", l.c_str());
+	});
+}
+
+bool ImageFile::probably_a_converted_file() const
+{
+	const auto exp_end = common_converted_end_filter + m_ext;
+	const size_t p = m_path.rfind(exp_end);
+	return p != std::string::npos && p + exp_end.size() == m_path.size();
+}
+
+bool ImageFile::is_video() const
+{
+	return false;
+}
+
+bool ImageFile::is_image() const
+{
+	return true;
+}
+
+
+std::shared_ptr<File> make_file_auto(const std::string& path, 
+	const FFMPEG& ff, const MAGICK& mk, 
+	std::shared_ptr<std::unique_ptr<Parameters>> pf, std::shared_ptr<std::unique_ptr<Parameters>> pm)
+{
+	const bool b_img = is_image(path);
+	const bool b_vid = is_video(path);
+
+	if (!b_img && !b_vid) return {};
+
+	return std::shared_ptr<File>(
+		b_img ?
+			reinterpret_cast<File*>(new ImageFile(path, mk, pm)) :
+			reinterpret_cast<File*>(new VideoFile(path, ff, pf)),
+		b_img ? 
+			[](File* f) { delete (ImageFile*)f; } :
+			[](File* f) { delete (VideoFile*)f; }
+	);
+}	

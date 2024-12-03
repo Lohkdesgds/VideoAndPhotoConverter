@@ -6,16 +6,16 @@
 #include <functional>
 
 
-class FFMPEG {
+class MAGICK {
 	const PathingStuff& m_pathing;
 
-	std::string m_path_ffmpeg;
+	std::string m_path_magick;
 public:
-	FFMPEG(const PathingStuff&);
+	MAGICK(const PathingStuff&);
 
-	// Call ffmpeg with args
+	// Call magick with args
 	void call(const std::initializer_list<std::string>&) const;
 
-	// Call ffmpeg with args and get output
+	// Call magick with args and get output
 	void call(const std::initializer_list<std::string>&, const std::function<void(const std::string&)>&) const;
 };

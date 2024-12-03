@@ -10,7 +10,7 @@ class Parameters {
 protected:
 	std::optional<int> m_cqp{ 37 };
 public:
-	virtual std::vector<std::string> to_ffmpeg_props(const std::string&) const = 0;
+	virtual std::vector<std::string> to_props(const std::string&) const = 0;
 	virtual std::vector<std::string> to_pretty_lines() const = 0;
 
 	Parameters& set_cqp(const int);
@@ -22,7 +22,7 @@ protected:
 	std::optional<float> m_scale; // < 1.0f == scale, > 1.0f == max res limit
 	bool m_mix{ false }; // 5.1
 public:
-	virtual std::vector<std::string> to_ffmpeg_props(const std::string&) const = 0;
+	virtual std::vector<std::string> to_props(const std::string&) const = 0;
 	virtual std::vector<std::string> to_pretty_lines() const = 0;
 
 	VideoParameters& set_mix(const bool);
@@ -42,7 +42,7 @@ private:
 	std::optional<std::string> m_tune{ "hq" };
 	std::optional<std::string> m_profile{ "main" };
 public:
-	virtual std::vector<std::string> to_ffmpeg_props(const std::string&) const;
+	virtual std::vector<std::string> to_props(const std::string&) const;
 	virtual std::vector<std::string> to_pretty_lines() const;
 
 	NVENC_parameters& set_preset(const std::string&);
@@ -65,7 +65,7 @@ public:
 private:
 	std::optional<std::string> m_preset{ "veryslow" };
 public:
-	virtual std::vector<std::string> to_ffmpeg_props(const std::string&) const;
+	virtual std::vector<std::string> to_props(const std::string&) const;
 	virtual std::vector<std::string> to_pretty_lines() const;
 
 	x264_parameters& set_preset(const std::string&);
@@ -80,12 +80,12 @@ public:
 	x264_parameters& set_maxres(const int);
 };
 
-// just convert
+// call with magick
 class JPEG_parameters : public Parameters {
 public:
 	JPEG_parameters();
 
-	virtual std::vector<std::string> to_ffmpeg_props(const std::string&) const;
+	virtual std::vector<std::string> to_props(const std::string&) const;
 	virtual std::vector<std::string> to_pretty_lines() const;
 
 	// [2..31]
