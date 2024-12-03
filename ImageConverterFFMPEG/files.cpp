@@ -4,7 +4,7 @@
 
 const std::string image_ext[] = {
 	"png", "jpg", "jpeg", "bmp", "gif", "ppm", "pgm", "tiff", "tga", "svg",
-	"heic", "heif"
+	"heic", "heif", "dng"
 };
 const std::string video_ext[] = {
 	"mp4", "avi", "mov", "mkv", "flv", "webm", "mpeg", "asf", "ogv", "mxf"
