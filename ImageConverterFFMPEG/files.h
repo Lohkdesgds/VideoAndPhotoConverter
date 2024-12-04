@@ -23,7 +23,11 @@ public:
 
 	virtual void convert() const = 0;
 
+	bool move_to_trash() const;
+
 	const std::string& get_path() const;
+	std::string get_trash_path() const;
+
 	virtual bool probably_a_converted_file() const = 0;
 
 	virtual bool is_video() const = 0;

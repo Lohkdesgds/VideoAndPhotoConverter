@@ -21,7 +21,7 @@ constexpr char g_ffmpeg_download_ver_url[] = "https://www.gyan.dev/ffmpeg/builds
 constexpr char g_ffmpeg_download_url[] = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z";
 constexpr char g_ffmpeg_download_file[] = "ffmpeg_temp.7z";
 
-constexpr char g_ffmpeg_path[] = "\\ImageConverter\\";
+constexpr char g_ffmpeg_path[] = "\\VideoAndPhotoConverter\\";
 constexpr char g_ffpmeg_base_path[] = "APPDATA";
 
 constexpr char g_magick_download_ftp_listing_url[] = "https://imagemagick.org/archive/binaries/?C=M;O=A";

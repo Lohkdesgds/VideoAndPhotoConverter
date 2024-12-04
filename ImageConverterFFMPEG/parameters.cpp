@@ -24,13 +24,20 @@ const std::string x264_parameters::m_preset_values[] = {
 	"faster", "veryfast", "superfast", "ultrafast"
 };
 
-
+bool atob(const char* s) { return s && (s[0] == 't' || s[0] == 'T' || s[0] == '1'); }
 
 Parameters& Parameters::set_cqp(const int v)
 {
 	if (v < 0 || v > 100) m_cqp.reset();
 	else m_cqp = v;
 	return *this;
+}
+
+bool Parameters::set(const char* nam, const char* val)
+{
+	if (strcmp(nam, "cqp") == 0) { set_cqp(std::atoi(val)); return true; }
+
+	return false;
 }
 
 
@@ -59,6 +66,23 @@ VideoParameters& VideoParameters::set_maxres(const int v)
 	if (v <= 1) m_scale.reset();
 	else m_scale = static_cast<float>(v);
 	return *this;
+}
+
+bool VideoParameters::set(const char* nam, const char* val)
+{
+	if (strcmp(nam, "cqp") == 0) { set_cqp(std::atoi(val)); return true; }
+
+	if (strcmp(nam, "mix") == 0) { set_mix(atob(val)); return true; }
+
+	if (strcmp(nam, "ab") == 0) { set_audio_bitrate(std::atoi(val)); return true; }
+	if (strcmp(nam, "audiobitrate") == 0) { set_audio_bitrate(std::atoi(val)); return true; }
+	if (strcmp(nam, "audio_bitrate") == 0) { set_audio_bitrate(std::atoi(val)); return true; }
+
+	if (strcmp(nam, "scale") == 0) { set_scale(static_cast<float>(std::atof(val))); return true; }
+
+	if (strcmp(nam, "maxres") == 0) { set_maxres(std::atoi(val)); return true; }
+
+	return false;
 }
 
 
@@ -128,23 +152,23 @@ std::vector<std::string> NVENC_parameters::to_pretty_lines() const
 	vec.push_back("Video codec: hevc_nvenc");
 	//vec.push_back("Hardware accel: cuda");
 
-	if (m_mix)	vec.push_back("Audio config: downsample 5.1");
-	else		vec.push_back("Audio config: original");
+	if (m_mix)	vec.push_back("[mix] Audio config: downsample 5.1");
+	else		vec.push_back("[mix] Audio config: original");
 
-	if (m_audio_bitrate.has_value())	vec.push_back("Audio bitrate: " + std::to_string(m_audio_bitrate.value()) + "k");
-	else								vec.push_back("Audio bitrate: undefined");
+	if (m_audio_bitrate.has_value())	vec.push_back("[ab] Audio bitrate: " + std::to_string(m_audio_bitrate.value()) + "k");
+	else								vec.push_back("[ab] Audio bitrate: undefined");
 
-	if (m_preset.has_value())			vec.push_back("Preset: " + m_preset.value());
-	else								vec.push_back("Preset: undefined");
+	if (m_preset.has_value())			vec.push_back("[preset] Preset: " + m_preset.value());
+	else								vec.push_back("[preset] Preset: undefined");
 
-	if (m_tune.has_value())				vec.push_back("Tune: " + m_tune.value());
-	else								vec.push_back("Tune: undefined");
+	if (m_tune.has_value())				vec.push_back("[tune] Tune: " + m_tune.value());
+	else								vec.push_back("[tune] Tune: undefined");
 
-	if (m_profile.has_value())			vec.push_back("Profile: " + m_profile.value());
-	else								vec.push_back("Profile: undefined");
+	if (m_profile.has_value())			vec.push_back("[profile] Profile: " + m_profile.value());
+	else								vec.push_back("[profile] Profile: undefined");
 
-	if (m_cqp.has_value())				vec.push_back("Constant of quality: " + std::to_string(m_cqp.value()));
-	else								vec.push_back("Constant of quality: undefined");
+	if (m_cqp.has_value())				vec.push_back("[cqp] Constant of quality: " + std::to_string(m_cqp.value()));
+	else								vec.push_back("[cqp] Constant of quality: undefined");
 
 	if (m_scale.has_value()) {
 		const float v = m_scale.value();
@@ -152,16 +176,16 @@ std::vector<std::string> NVENC_parameters::to_pretty_lines() const
 		char buf[64]{};
 
 		if (v < 1.0f) {
-			snprintf(buf, std::size(buf), "Scale: %.3f", v);
+			snprintf(buf, std::size(buf), "[scale] Scale: %.3f", v);
 		}
 		else {
 			const int c = static_cast<int>(v);
-			snprintf(buf, std::size(buf), "Shorter side length: %d pixel(s)", c);
+			snprintf(buf, std::size(buf), "[maxres] Shorter side length: %d pixel(s)", c);
 		}
 
 		vec.push_back(buf);
 	}
-	else vec.push_back("Scale/Shorter side length: undefined");
+	else vec.push_back("[scale|maxres] Scale/Shorter side length: undefined");
 
 	return vec;
 }
@@ -198,6 +222,29 @@ NVENC_parameters& NVENC_parameters::set_mix(const bool v) { this->VideoParameter
 NVENC_parameters& NVENC_parameters::set_audio_bitrate(const int v) { this->VideoParameters::set_audio_bitrate(v); return *this; }
 NVENC_parameters& NVENC_parameters::set_scale(const float v) { this->VideoParameters::set_scale(v); return *this; }
 NVENC_parameters& NVENC_parameters::set_maxres(const int v) { this->VideoParameters::set_maxres(v); return *this; }
+
+bool NVENC_parameters::set(const char* nam, const char* val)
+{
+	if (strcmp(nam, "cqp") == 0) { set_cqp(std::atoi(val)); return true; }
+
+	if (strcmp(nam, "mix") == 0) { set_mix(atob(val)); return true; }
+
+	if (strcmp(nam, "ab") == 0) { set_audio_bitrate(std::atoi(val)); return true; }
+	if (strcmp(nam, "audiobitrate") == 0) { set_audio_bitrate(std::atoi(val)); return true; }
+	if (strcmp(nam, "audio_bitrate") == 0) { set_audio_bitrate(std::atoi(val)); return true; }
+
+	if (strcmp(nam, "scale") == 0) { set_scale(static_cast<float>(std::atof(val))); return true; }
+
+	if (strcmp(nam, "maxres") == 0) { set_maxres(std::atoi(val)); return true; }
+
+	if (strcmp(nam, "preset") == 0) { set_preset(val); return true; }
+
+	if (strcmp(nam, "tune") == 0) { set_tune(val); return true; }
+
+	if (strcmp(nam, "profile") == 0) { set_profile(val); return true; }
+
+	return false;
+}
 
 
 
@@ -257,17 +304,17 @@ std::vector<std::string> x264_parameters::to_pretty_lines() const
 
 	vec.push_back("Video codec: libx264");
 
-	if (m_mix)	vec.push_back("Audio config: downsample 5.1");
-	else		vec.push_back("Audio config: original");
+	if (m_mix)	vec.push_back("[mix] Audio config: downsample 5.1");
+	else		vec.push_back("[mix] Audio config: original");
 	
-	if (m_audio_bitrate.has_value())	vec.push_back("Audio bitrate: " + std::to_string(m_audio_bitrate.value()) + "k");
-	else								vec.push_back("Audio bitrate: undefined");
+	if (m_audio_bitrate.has_value())	vec.push_back("[ab] Audio bitrate: " + std::to_string(m_audio_bitrate.value()) + "k");
+	else								vec.push_back("[ab] Audio bitrate: undefined");
 
-	if (m_preset.has_value())			vec.push_back("Preset: " + m_preset.value());
-	else								vec.push_back("Preset: undefined");
+	if (m_preset.has_value())			vec.push_back("[preset] Preset: " + m_preset.value());
+	else								vec.push_back("[preset] Preset: undefined");
 
-	if (m_cqp.has_value())				vec.push_back("Constant of quality: " + std::to_string(m_cqp.value()));
-	else								vec.push_back("Constant of quality: undefined");
+	if (m_cqp.has_value())				vec.push_back("[cqp] Constant of quality: " + std::to_string(m_cqp.value()));
+	else								vec.push_back("[cqp] Constant of quality: undefined");
 
 	if (m_scale.has_value()) {
 		const float v = m_scale.value();
@@ -275,16 +322,16 @@ std::vector<std::string> x264_parameters::to_pretty_lines() const
 		char buf[64]{};
 
 		if (v < 1.0f) {
-			snprintf(buf, std::size(buf), "Scale: %.3f", v);
+			snprintf(buf, std::size(buf), "[scale] Scale: %.3f", v);
 		}
 		else {
 			const int c = static_cast<int>(v);
-			snprintf(buf, std::size(buf), "Shorter side length: %d pixel(s)", c);
+			snprintf(buf, std::size(buf), "[maxres] Shorter side length: %d pixel(s)", c);
 		}
 
 		vec.push_back(buf);
 	}
-	else vec.push_back("Scale/Shorter side length: undefined");
+	else vec.push_back("[scale|maxres] Scale/Shorter side length: undefined");
 
 	return vec;
 }
@@ -308,6 +355,25 @@ x264_parameters& x264_parameters::set_audio_bitrate(const int v) { this->VideoPa
 x264_parameters& x264_parameters::set_scale(const float v) { this->VideoParameters::set_scale(v); return *this; }
 x264_parameters& x264_parameters::set_maxres(const int v) { this->VideoParameters::set_maxres(v); return *this; }
 
+bool x264_parameters::set(const char* nam, const char* val)
+{
+	if (strcmp(nam, "cqp") == 0) { set_cqp(std::atoi(val)); return true; }
+
+	if (strcmp(nam, "mix") == 0) { set_mix(atob(val)); return true; }
+
+	if (strcmp(nam, "ab") == 0) { set_audio_bitrate(std::atoi(val)); return true; }
+	if (strcmp(nam, "audiobitrate") == 0) { set_audio_bitrate(std::atoi(val)); return true; }
+	if (strcmp(nam, "audio_bitrate") == 0) { set_audio_bitrate(std::atoi(val)); return true; }
+
+	if (strcmp(nam, "scale") == 0) { set_scale(static_cast<float>(std::atof(val))); return true; }
+
+	if (strcmp(nam, "maxres") == 0) { set_maxres(std::atoi(val)); return true; }
+
+	if (strcmp(nam, "preset") == 0) { set_preset(val); return true; }
+
+	return false;
+}
+
 JPEG_parameters::JPEG_parameters()
 {
 	set_cqp(40);
@@ -328,8 +394,8 @@ std::vector<std::string> JPEG_parameters::to_pretty_lines() const
 {
 	std::vector<std::string> vec;
 
-	if (m_cqp.has_value())	vec.push_back("Quality: " + std::to_string(m_cqp.value()) + "%");
-	else					vec.push_back("Quality: undefined");
+	if (m_cqp.has_value())	vec.push_back("[cqp] Quality: " + std::to_string(m_cqp.value()) + "%");
+	else					vec.push_back("[cqp] Quality: undefined");
 
 	return vec;
 }
@@ -339,4 +405,11 @@ JPEG_parameters& JPEG_parameters::set_cqp(const int v)
 	if (v < 1 || v > 100) m_cqp.reset();
 	else m_cqp = v;
 	return *this;
+}
+
+bool JPEG_parameters::set(const char* nam, const char* val)
+{
+	if (strcmp(nam, "cqp") == 0) { set_cqp(std::atoi(val)); return true; }
+
+	return false;
 }

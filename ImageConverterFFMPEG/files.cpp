@@ -1,6 +1,7 @@
 #include "files.h"
 
 #include <algorithm>
+#include <filesystem>
 
 const std::string image_ext[] = {
 	"png", "jpg", "jpeg", "bmp", "gif", "ppm", "pgm", "tiff", "tga", "svg",
@@ -11,6 +12,7 @@ const std::string video_ext[] = {
 };
 const std::string image_final_format = "jpg";
 const std::string video_final_format = "mp4";
+constexpr char trash_move_folder_name[] = ".VideoAndPhotoConverterConvertedFiles";
 
 constexpr char common_converted_end_filter[] = "_conv.";
 
@@ -37,11 +39,31 @@ bool is_video(const std::string& file_name)
 File::File(const std::string& path, const std::shared_ptr<std::unique_ptr<Parameters>>& parameters, const std::string& extension)
 	: m_path(path), m_parameters(parameters), m_ext(extension)
 {
+	if (m_path.find(":\\") == std::string::npos) throw std::invalid_argument("Path must be canonical (e.g. not relative, like C:\\folder\\file.mp4)");
+}
+
+bool File::move_to_trash() const
+{	
+	std::error_code ec;
+	const std::string full_path = get_trash_path();
+	const std::string only_dirs = full_path.substr(0, full_path.rfind("\\"));
+	std::filesystem::create_directories(only_dirs, ec);
+	if (ec) return false;
+	std::filesystem::rename(m_path, full_path, ec);
+	return !ec;
 }
 
 const std::string& File::get_path() const
 {
 	return m_path;
+}
+
+std::string File::get_trash_path() const
+{
+	const size_t p = m_path.find(":\\");
+	const std::string drive = m_path.substr(0, p + 2);
+	const std::string remaining_path = m_path.substr(p + 2);
+	return drive + trash_move_folder_name + "\\" + remaining_path;
 }
 
 VideoFile::VideoFile(const std::string& path, const FFMPEG& ffmpeg, const std::shared_ptr<std::unique_ptr<Parameters>>& parameters)

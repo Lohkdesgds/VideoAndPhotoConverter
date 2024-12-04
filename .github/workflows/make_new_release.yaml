@@ -1,0 +1,45 @@
+name: Visual Studio action build example test
+
+on:
+  workflow_dispatch:
+    inputs:
+      make_prerelease:
+        description: Make it a pre-release
+        type: string
+        required: false
+        default: 'false'
+      bump_type:
+        description: What to bump
+        type: string
+        required: false
+        default: 'm'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:  
+      - name: Build
+        uses: LunarisLib/actions/MSVC@master
+        with:
+          checkout: 'true'
+          project_path: '.'
+          artifact_name: VS_PROJECT
+          
+      - name: Versioning
+        id: versioning
+        uses: LunarisLib/actions/Versioning@master
+        with:
+          kind: ${{ inputs.bump_type }}
+          project: VS_PROJECT
+
+      - name: Publish
+        uses: LunarisLib/actions/Publisher@master
+        with:
+          title: "VideoAndPhotoConverter new release!"
+          body: "A new release was compiled for this project."
+          artifact_name: VS_PROJECT
+          tag_name: ${{ steps.versioning.outputs.version }}_Windows
+          prerelease: ${{ inputs.make_prerelease }}
+
+
+    
