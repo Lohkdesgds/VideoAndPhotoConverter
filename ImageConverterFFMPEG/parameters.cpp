@@ -129,7 +129,7 @@ std::vector<std::string> NVENC_parameters::to_props(const std::string& input) co
 		const float v = m_scale.value();
 
 		vec.push_back("-filter:v");
-		char buf[64]{};
+		char buf[128]{};
 
 		if (v < 1.0f) {
 			snprintf(buf, std::size(buf), "\"scale=in_w*%.3f:in_h*%.3f\"", v, v);

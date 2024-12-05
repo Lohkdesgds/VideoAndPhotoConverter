@@ -1,4 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerCommandArguments>"E:\01e\172-VIDEO_27mm-240701_141752.0.mp4" "E:\01e\173-VIDEO_23mm-240701_142009.0.mp4" "E:\01e\174-VIDEO_27mm-240701_142103.0.mp4" "E:\01e\175-VIDEO_23mm-240701_142237.0.mp4" "E:\01e\176-VIDEO_14mm-240701_143104.0.mp4" "E:\01e\177-VIDEO_14mm-240701_143131.0.mp4"</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LocalDebuggerCommandArguments>"E:\01e\172-VIDEO_27mm-240701_141752.0.mp4" "E:\01e\173-VIDEO_23mm-240701_142009.0.mp4" "E:\01e\174-VIDEO_27mm-240701_142103.0.mp4" "E:\01e\175-VIDEO_23mm-240701_142237.0.mp4" "E:\01e\176-VIDEO_14mm-240701_143104.0.mp4" "E:\01e\177-VIDEO_14mm-240701_143131.0.mp4"</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerCommandArguments>"E:\01e\172-VIDEO_27mm-240701_141752.0.mp4" "E:\01e\173-VIDEO_23mm-240701_142009.0.mp4" "E:\01e\174-VIDEO_27mm-240701_142103.0.mp4" "E:\01e\175-VIDEO_23mm-240701_142237.0.mp4" "E:\01e\176-VIDEO_14mm-240701_143104.0.mp4" "E:\01e\177-VIDEO_14mm-240701_143131.0.mp4"</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommandArguments>"E:\01e\172-VIDEO_27mm-240701_141752.0.mp4" "E:\01e\173-VIDEO_23mm-240701_142009.0.mp4" "E:\01e\174-VIDEO_27mm-240701_142103.0.mp4" "E:\01e\175-VIDEO_23mm-240701_142237.0.mp4" "E:\01e\176-VIDEO_14mm-240701_143104.0.mp4" "E:\01e\177-VIDEO_14mm-240701_143131.0.mp4"</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>
