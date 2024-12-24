@@ -1,0 +1,1 @@
+/usr/bin/g++ -O3 -DNDEBUG CMakeFiles/vpc_cmd.dir/src/main.cpp.o -o vpc_cmd  /usr/lib/x86_64-linux-gnu/libcurl.so
