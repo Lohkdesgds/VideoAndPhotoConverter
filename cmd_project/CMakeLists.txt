@@ -31,3 +31,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 find_package( CURL REQUIRED )
 target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl )
+
+add_custom_command(TARGET ${PROJECT_NAME} 
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> ../${PROJECT_NAME})
