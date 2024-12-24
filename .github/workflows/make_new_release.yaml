@@ -16,30 +16,37 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
-    steps:  
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
+    steps:
       - name: Build
-        uses: LunarisLib/actions/MSVC@master
+        uses: LunarisLib/actions/CMake@master
         with:
           checkout: 'true'
           project_path: '.'
-          artifact_name: VS_PROJECT
-          
+          artifact_name: ${{ matrix.os }}_PROJECT
+          use_vcpkg: 'true'
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Versioning
         id: versioning
         uses: LunarisLib/actions/Versioning@master
         with:
           kind: ${{ inputs.bump_type }}
-          project: VS_PROJECT
-
+          project: VS_PROJECT # changing would break counting
+          
       - name: Publish
         uses: LunarisLib/actions/Publisher@master
         with:
-          title: "VideoAndPhotoConverter new release!"
-          body: "A new release was compiled for this project."
-          artifact_name: VS_PROJECT
-          tag_name: ${{ steps.versioning.outputs.version }}_Windows
+          title: "CMake Release"
+          body: "This is a sample of a body to the example of a CMake project"
+          tag_name: ${{ steps.versioning.outputs.version }}
           prerelease: ${{ inputs.make_prerelease }}
-
 
     
