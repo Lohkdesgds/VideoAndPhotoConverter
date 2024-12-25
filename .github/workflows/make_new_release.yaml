@@ -1,4 +1,4 @@
-name: Visual Studio action build example test
+name: Multi Platform Build
 
 on:
   workflow_dispatch:
@@ -7,12 +7,12 @@ on:
         description: Make it a pre-release
         type: string
         required: false
-        default: 'false'
+        default: 'true' # change back later (to false)
       bump_type:
         description: What to bump
         type: string
         required: false
-        default: 'm'
+        default: 'snapshot' # change back later (to 'm')
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
     steps:
       - name: Build
-        uses: LunarisLib/actions/CMake@master
+        uses: LunarisLib/actions/CMake@experimental
         with:
           checkout: 'true'
           project_path: '.'
