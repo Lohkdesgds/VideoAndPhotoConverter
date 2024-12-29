@@ -4,10 +4,10 @@ if (DEFINED $ENV{CMAKE_TOOLCHAIN_FILE})
     include ($ENV{CMAKE_TOOLCHAIN_FILE})
 endif()
 
-project(vpc_cmd VERSION 1.0)
+project(vpc_gui VERSION 1.0)
 
 # Release?
-set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Release)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
     set_directory_properties(PROPERTIES COMPILE_DEFINITIONS "_DEBUG")
@@ -29,5 +29,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD_REQUIRED ON
 )
 
-find_package( CURL REQUIRED )
-target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl )
+find_package(SFML COMPONENTS system window graphics audio CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-system sfml-network sfml-graphics sfml-window sfml-audio)

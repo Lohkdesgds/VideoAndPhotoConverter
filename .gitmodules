@@ -4,3 +4,6 @@
 [submodule "cmd_project/deps/Lunaris/CURL"]
 	path = cmd_project/deps/Lunaris/CURL
 	url = https://www.github.com/LunarisLib/Lunaris-CURL
+[submodule "vcpkg_integration"]
+	path = vcpkg_integration
+	url = https://github.com/bitmeal/vcpkg-cmake-integration

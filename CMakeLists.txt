@@ -1,5 +1,11 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.22)
+
+set(VCPKG_VERSION latest)
+include(vcpkg_integration/vcpkg.cmake)
 
 project(VideoAndPhotoConverterCombo)
 
 add_subdirectory(cmd_project)
+
+# Linux: needs sudo apt install libxcursor-dev libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev libopengl-dev 
+add_subdirectory(gui_project)
