@@ -21,6 +21,33 @@ jobs:
       matrix:
         os: [ windows-latest, ubuntu-latest ]
     steps:
+      - name: Setup Toolchain Windows
+        if: startsWith(matrix.os, 'windows')
+        run: |
+          choco install -y ninja
+          ninja --version
+          cmake --version
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        if: startsWith(matrix.os, 'windows')
+        with:
+          arch: x64
+
+      - name: Setup Toolchain Ubuntu
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+          ninja --version
+          cmake --version
+
+      - name: Install Linux stuff
+        if: startsWith(matrix.os, 'ubuntu')
+        shell: bash
+        run: |
+          sudo apt install -y libxrandr-dev libxcursor-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
+
       - name: Build
         uses: LunarisLib/actions/CMake@experimental
         with:
