@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
-set(VCPKG_VERSION latest)
-include(vcpkg_integration/vcpkg.cmake)
+#set(VCPKG_VERSION latest)
+#include(vcpkg_integration/vcpkg.cmake)
 
 project(VideoAndPhotoConverterCombo)
 

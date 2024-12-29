@@ -15,51 +15,19 @@ on:
 #        default: 'snapshot' # change back later (to 'm')
 
 jobs:
-  basic_test:
-    name: "basic test: @${{ matrix.os }}-[${{ matrix.build_type }}]"
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
-        build_type: [Release, Debug]
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
     steps:
-      - 
-        name: Checkout
-        uses: actions/checkout@v4
-      ###############################################
-      # toolchain setup
-      - 
-        name: Setup Toolchain Windows
-        if: startsWith(matrix.os, 'windows')
-        run: |
-          choco install -y ninja
-          ninja --version
-          cmake --version
-      - 
-        name: Setup MSVC
-        uses: ilammy/msvc-dev-cmd@v1
-        if: startsWith(matrix.os, 'windows')
+      - name: Build
+        uses: LunarisLib/actions/CMake@experimental
         with:
-          arch: x64
-      - 
-        name: Setup Toolchain Ubuntu
-        if: startsWith(matrix.os, 'ubuntu')
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ninja-build libxrandr-dev libxcursor-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
-          ninja --version
-          cmake --version
-      ###############################################
-      # build and run tests
-      -
-        name: Configure
-        run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -G Ninja .
-      -
-        name: Build
-        run: |
-          cmake --build build
+          checkout: 'true'
+          project_path: '.'
+          artifact_name: ${{ matrix.os }}_PROJECT
+          use_vcpkg: 'true'
 
 #  publish:
 #    needs: build

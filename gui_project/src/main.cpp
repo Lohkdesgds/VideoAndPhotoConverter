@@ -13,10 +13,9 @@ int main()
 
     while (window.isOpen())
     {
-        sf::Event ev;
-        while (window.pollEvent(ev))
+        while (const std::optional event = window.pollEvent())
         {
-            if (ev.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
                 window.close();
         }
 
@@ -24,10 +23,6 @@ int main()
         window.draw(shape);
         window.display();
     }
-
-    
-
-    std::this_thread::sleep_for(std::chrono::seconds(10));
 
     return 0;
 }

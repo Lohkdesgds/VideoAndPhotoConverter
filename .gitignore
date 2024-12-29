@@ -7,3 +7,4 @@ x64/
 /ImageConverterFFMPEG/ffplay.exe
 *.exe
 build/
+vcpkg_installed/
