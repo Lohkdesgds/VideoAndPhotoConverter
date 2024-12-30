@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.28)
 project(vpc_gui LANGUAGES CXX)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 #find_package(Freetype REQUIRED)
 #target_link_libraries(${PROJECT_NAME} PRIVATE Freetype::Freetype) # since CMake 3.10
+
+set(SFML_STATIC_LIBRARIES TRUE)
 
 include(FetchContent)
 FetchContent_Declare(SFML
