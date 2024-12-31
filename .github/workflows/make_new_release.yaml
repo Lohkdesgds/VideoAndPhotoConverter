@@ -25,10 +25,9 @@ jobs:
       - name: Build
         uses: LunarisLib/actions/CMake@experimental
         with:
-          checkout: 'true'
-          project_path: '.'
           artifact_name: ${{ matrix.os }}_PROJECT
           use_vcpkg: 'true'
+          debug_everything: 'true'
 
 #  publish:
 #    needs: build
