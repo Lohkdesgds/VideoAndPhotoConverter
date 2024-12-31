@@ -18,7 +18,7 @@ FetchContent_Declare(SFML
 FetchContent_MakeAvailable(SFML)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics)
+target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics SFML::Network SFML::System SFML::Window SFML::Audio)
 
 
 #cmake_minimum_required(VERSION 3.22)

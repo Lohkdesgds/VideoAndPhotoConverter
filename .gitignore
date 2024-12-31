@@ -8,3 +8,4 @@ x64/
 *.exe
 build/
 vcpkg_installed/
+runner.txt
