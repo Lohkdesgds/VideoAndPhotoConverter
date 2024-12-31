@@ -16,22 +16,27 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.name }}
     continue-on-error: true
     strategy:
       matrix:
-        os: [ windows-latest, ubuntu-latest, macos-latest ]
+        config:
+          - { os: 'windows-latest',     name: 'Windows X64' }
+          - { os: 'ubuntu-latest',      name: 'Ubuntu X64' }
+          - { os: 'macos-latest',       name: 'MacOS arm64' }
+          - { os: 'macos-latest-large', name: 'MacOS X64' }
     steps:
       - name: Linux fix for SFML
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.config.os == 'ubuntu-latest' }}
         shell: bash
         run: |
-          sudo apt install -y libxcursor-dev libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev libopengl-dev libogg-dev libvorbis-dev
+          sudo apt install -y libxcursor-dev libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev libopengl-dev libogg-dev libvorbis-dev libflac-dev
 
       - name: Build
         uses: LunarisLib/actions/CMake@experimental
         with:
-          artifact_name: ${{ matrix.os }}_PROJECT
+          artifact_name: ${{ matrix.config.os }}_PROJECT
           use_vcpkg: 'true'
           debug_everything: 'false'
 
