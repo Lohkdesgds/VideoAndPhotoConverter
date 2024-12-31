@@ -25,7 +25,7 @@ jobs:
           - { os: 'windows-latest',     name: 'Windows X64' }
           - { os: 'ubuntu-latest',      name: 'Ubuntu X64' }
           - { os: 'macos-latest',       name: 'MacOS arm64' }
-          - { os: 'macos-latest-large', name: 'MacOS X64' }
+          # - { os: 'macos-latest-large', name: 'MacOS X64' } # Intel based are only large, and they are paid.
     steps:
       - name: Linux fix for SFML
         if: ${{ matrix.config.os == 'ubuntu-latest' }}
