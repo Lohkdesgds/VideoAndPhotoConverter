@@ -1,9 +1,9 @@
 [submodule "ImageConverterFFMPEG/deps/Lunaris/socket"]
 	path = ImageConverterFFMPEG/deps/Lunaris/socket
 	url = https://www.github.com/LunarisLib/Lunaris-Socket
-[submodule "cmd_project/deps/Lunaris/CURL"]
-	path = cmd_project/deps/Lunaris/CURL
-	url = https://www.github.com/LunarisLib/Lunaris-CURL
 [submodule "vcpkg"]
 	path = vcpkg
 	url = https://github.com/microsoft/vcpkg
+[submodule "project/shared/deps/Lunaris/CURL"]
+	path = project/shared/deps/Lunaris/CURL
+	url = https://www.github.com/LunarisLib/Lunaris-CURL

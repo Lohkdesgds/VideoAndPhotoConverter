@@ -15,12 +15,17 @@ else ()
     set_directory_properties(PROPERTIES COMPILE_DEFINITIONS "NDEBUG")
 endif ()
 
+get_filename_component(SHARED_DIR ../shared ABSOLUTE)
 
-file(GLOB_RECURSE source_list "src/*.cpp")
+file(GLOB_RECURSE source_list "src/*.cpp" ${SHARED_DIR}/src/*.cpp)
+
 add_executable(${PROJECT_NAME} ${source_list})
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
-    "deps"
+    ${SHARED_DIR}/deps
+    ${SHARED_DIR}/include
+    deps
+    include
 )
 
 # Set C++ version

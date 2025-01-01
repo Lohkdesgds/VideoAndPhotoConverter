@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(VideoAndPhotoConverterCombo)
 
-add_subdirectory(cmd_project)
+add_subdirectory(project/cmd)
 
 # Linux: needs sudo apt install libxcursor-dev libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev libopengl-dev 
-add_subdirectory(gui_project)
+add_subdirectory(project/gui)

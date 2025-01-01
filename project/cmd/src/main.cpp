@@ -1,8 +1,11 @@
 #include <iostream>
 #include <Lunaris/CURL/curl_cpp.h>
 
+#include <test.h>
+
 int main()
 {
+    hello_world();
     std::cout << "Two examples of calls, one simple GET and other POST with GET params, header and post body" << std::endl;
 
     const auto res = http::do_GET("http://v4.ipv6-test.com/api/myip.php");
