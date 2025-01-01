@@ -34,7 +34,7 @@ jobs:
           sudo apt install -y libxcursor-dev libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev libopengl-dev libogg-dev libvorbis-dev libflac-dev
 
       - name: Build
-        uses: LunarisLib/actions/CMake@experimental
+        uses: LunarisLib/actions/CMake@master
         with:
           artifact_name: ${{ matrix.config.os }}_PROJECT
           use_vcpkg: 'true'
@@ -46,13 +46,13 @@ jobs:
     steps:
       - name: Versioning
         id: versioning
-        uses: LunarisLib/actions/Versioning@experimental
+        uses: LunarisLib/actions/Versioning@master
         with:
           kind: ${{ inputs.bump_type }}
           project: VS_PROJECT # changing would break counting
           
       - name: Publish
-        uses: LunarisLib/actions/Publisher@experimental
+        uses: LunarisLib/actions/Publisher@master
         with:
           title: "CMake Release"
           body: "This is a sample of a body to the example of a CMake project"
