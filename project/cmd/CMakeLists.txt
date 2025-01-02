@@ -24,6 +24,7 @@ add_executable(${PROJECT_NAME} ${source_list})
 target_include_directories(${PROJECT_NAME} PRIVATE 
     ${SHARED_DIR}/deps
     ${SHARED_DIR}/include
+    ${SHARED_DIR}/deps/json/include
     deps
     include
 )

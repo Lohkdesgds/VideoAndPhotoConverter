@@ -7,3 +7,9 @@
 [submodule "project/shared/deps/Lunaris/CURL"]
 	path = project/shared/deps/Lunaris/CURL
 	url = https://www.github.com/LunarisLib/Lunaris-CURL
+[submodule "project/shared/deps/Lunaris/Process"]
+	path = project/shared/deps/Lunaris/Process
+	url = https://www.github.com/LunarisLib/Lunaris-Process
+[submodule "project/shared/deps/json"]
+	path = project/shared/deps/json
+	url = https://www.github.com/nlohmann/json

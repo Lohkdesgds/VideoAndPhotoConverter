@@ -23,8 +23,13 @@ add_executable(${PROJECT_NAME} ${source_list})
 target_include_directories(${PROJECT_NAME} PRIVATE 
     ${SHARED_DIR}/deps
     ${SHARED_DIR}/include
+    ${SHARED_DIR}/deps/json/include
     deps
     include
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics SFML::Network SFML::System SFML::Window SFML::Audio)
+
+
+find_package( CURL REQUIRED )
+target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl )
