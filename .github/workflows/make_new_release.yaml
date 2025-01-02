@@ -24,7 +24,8 @@ jobs:
         config:
           - { os: 'windows-latest',     name: 'Windows X64' }
           - { os: 'ubuntu-latest',      name: 'Ubuntu X64' }
-          - { os: 'macos-latest',       name: 'MacOS arm64' }
+          # I don't have the time for macos now. Not my platform. Maybe in the future.
+          # - { os: 'macos-latest',       name: 'MacOS arm64' }
           # - { os: 'macos-latest-large', name: 'MacOS X64' } # Intel based are only large, and they are paid.
     steps:
       - name: Linux fix for SFML
