@@ -72,7 +72,7 @@
 //{
 //	std::fstream fp(m_base_path + file_name, std::ios::out | std::ios::binary);
 //	if (!fp || fp.bad() || !fp.is_open()) {
-//        Logger::print(Logger::type::ERROR, "[PS] Could not download to '" + file_name + "'. Failure on file opening.");
+//        Logger::print(Logger::type::T_ERROR, "[PS] Could not download to '" + file_name + "'. Failure on file opening.");
 //		return false;
 //	}
 //
@@ -84,7 +84,7 @@
 //
 //	fp.close();
 //
-//	Logger::print(Logger::type::INFO, "[PS] '" + file_name + "' installed.");
+//	Logger::print(Logger::type::T_INFO, "[PS] '" + file_name + "' installed.");
 //
 //	return true;
 //}
@@ -97,14 +97,14 @@
 //    }));
 //
 //    if (res.code < 200 || res.code >= 300) {
-//        Logger::print(Logger::type::ERROR, "[PS] Internet down or link broken! HTTP status: " + std::to_string(res.code));
-//        Logger::print(Logger::type::ERROR, "[PS] Body: " + res.body);
+//        Logger::print(Logger::type::T_ERROR, "[PS] Internet down or link broken! HTTP status: " + std::to_string(res.code));
+//        Logger::print(Logger::type::T_ERROR, "[PS] Body: " + res.body);
 //        return false;
 //    }
 //
 //    target = std::move(res.body);
 //
-//	Logger::print(Logger::type::DEBUG, "[PS] Downloaded from '" + url + "'.");
+//	Logger::print(Logger::type::T_DEBUG, "[PS] Downloaded from '" + url + "'.");
 //
 //	return true;
 //}
@@ -122,43 +122,43 @@
 //#endif
 //
 //	if (!std::filesystem::exists(exp_7z_exe)) {
-//		Logger::print(Logger::type::INFO, "[PS] 7z not available. Downloading it...");
+//		Logger::print(Logger::type::T_INFO, "[PS] 7z not available. Downloading it...");
 //
 //#ifdef _WIN32
 //		if (!_download_fp(m_dl.m_7z, g_7z_portable_file)) return false;
 //#else
 //
-//		Logger::print(Logger::type::INFO, "[PS] Extracting 7z...");
+//		Logger::print(Logger::type::T_INFO, "[PS] Extracting 7z...");
 //
 //		if (!_download_fp(m_dl.m_7z, g_7z_download_file)) return false;
 //
 //		call_tar_extract(g_7z_portable_file);
 //#endif
 //
-//		Logger::print(Logger::type::INFO, "[PS] 7z ready.");
+//		Logger::print(Logger::type::T_INFO, "[PS] 7z ready.");
 //	}
 //	else {
-//		Logger::print(Logger::type::INFO, "[PS] 7z is already installed.");
+//		Logger::print(Logger::type::T_INFO, "[PS] 7z is already installed.");
 //	}
 //
 //#ifdef _WIN32
 //	if (!std::filesystem::exists(exp_7za_exe)) {
-//		Logger::print(Logger::type::INFO, "[PS] 7za not available. Downloading it...");
+//		Logger::print(Logger::type::T_INFO, "[PS] 7za not available. Downloading it...");
 //
 //		if (!_download_fp(m_dl.m_7za, g_7za_download_file)) return false;
 //
-//		Logger::print(Logger::type::INFO, "[PS] Extracting 7za...");
+//		Logger::print(Logger::type::T_INFO, "[PS] Extracting 7za...");
 //
 //		call_7z_extract(g_7za_download_file);
 //
-//		Logger::print(Logger::type::INFO, "[PS] Cleaning up 7za download...");
+//		Logger::print(Logger::type::T_INFO, "[PS] Cleaning up 7za download...");
 //
 //		_erase_based(g_7za_download_file);
 //
-//		Logger::print(Logger::type::INFO, "[PS] 7za ready.");
+//		Logger::print(Logger::type::T_INFO, "[PS] 7za ready.");
 //	}
 //	else {
-//		Logger::print(Logger::type::INFO, "[PS] 7za is already installed.");
+//		Logger::print(Logger::type::T_INFO, "[PS] 7za is already installed.");
 //	}
 //#else
 //
@@ -172,25 +172,25 @@
 //	const auto exp_ffmpeg_exe = this->get_ffmpeg_exe();
 //
 //	if (!std::filesystem::exists(exp_ffmpeg_exe)) {
-//		Logger::print(Logger::type::INFO, "[PS] FFMPEG not available in latest version. "
+//		Logger::print(Logger::type::T_INFO, "[PS] FFMPEG not available in latest version. "
 //            "Cleaning up FFMPEG and downloading latest...");
 //
 //		std::filesystem::remove_all(get_folder_with_name_in_dir(m_base_path, "ffmpeg-"));
 //
 //		if (!_download_fp(m_dl.m_ffmpeg, g_ffmpeg_download_file)) return false;
 //
-//		Logger::print(Logger::type::INFO, "[PS] Extracting FFMPEG...");
+//		Logger::print(Logger::type::T_INFO, "[PS] Extracting FFMPEG...");
 //
 //		call_7z_extract(g_ffmpeg_download_file);
 //
-//		Logger::print(Logger::type::INFO, "[PS] Cleaning up FFMPEG download...");
+//		Logger::print(Logger::type::T_INFO, "[PS] Cleaning up FFMPEG download...");
 //
 //		_erase_based(g_ffmpeg_download_file);
 //
-//		Logger::print(Logger::type::INFO, "[PS] FFMPEG ready.");
+//		Logger::print(Logger::type::T_INFO, "[PS] FFMPEG ready.");
 //	}
 //	else {
-//		Logger::print(Logger::type::INFO, "[PS] FFMPEG is already installed.");
+//		Logger::print(Logger::type::T_INFO, "[PS] FFMPEG is already installed.");
 //	}
 //
 //	return true;
@@ -201,25 +201,25 @@
 ////	const auto exp_magick_exe = this->get_magick_exe();
 ////
 ////	if (!std::filesystem::exists(exp_magick_exe)) {
-////		Logger::print(Logger::type::INFO, "[PS] ImageMagick not available in latest version. "
+////		Logger::print(Logger::type::T_INFO, "[PS] ImageMagick not available in latest version. "
 ////            "Cleaning up ImageMagick and downloading latest...");
 ////
 ////		std::filesystem::remove_all(get_folder_with_name_in_dir(m_base_path, "ImageMagick-"));
 ////
 ////		if (!_download_fp(m_dl.m_magick, g_magick_download_file)) return false;
 ////
-////		Logger::print(Logger::type::INFO, "[PS] Extracting ImageMagick...");
+////		Logger::print(Logger::type::T_INFO, "[PS] Extracting ImageMagick...");
 ////
 ////		call_7z_extract(g_magick_download_file);
 ////
-////		Logger::print(Logger::type::INFO, "[PS] Cleaning up ImageMagick download...");
+////		Logger::print(Logger::type::T_INFO, "[PS] Cleaning up ImageMagick download...");
 ////
 ////		_erase_based(g_magick_download_file);
 ////
-////		Logger::print(Logger::type::INFO, "[PS] ImageMagick ready.");
+////		Logger::print(Logger::type::T_INFO, "[PS] ImageMagick ready.");
 ////	}
 ////	else {
-////		Logger::print(Logger::type::INFO, "[PS] ImageMagick is already installed.");
+////		Logger::print(Logger::type::T_INFO, "[PS] ImageMagick is already installed.");
 ////	}
 //
 //	return true;
@@ -236,34 +236,34 @@
 //		std::unordered_map<std::string, std::string> out;
 //		std::string buf;
 //
-//		Logger::print(Logger::type::DEBUG, "Gathering Github assets from '" + url + "'...");
+//		Logger::print(Logger::type::T_DEBUG, "Gathering Github assets from '" + url + "'...");
 //
 //		if (!_download_to(url, buf)) {
-//            Logger::print(Logger::type::ERROR, "Cannot get from '" + url + "'!");
+//            Logger::print(Logger::type::T_ERROR, "Cannot get from '" + url + "'!");
 //			return out;
 //		}
 //
 //		const nlohmann::json jroot = nlohmann::json::parse(buf, nullptr, false);
 //
 //		if (jroot.is_discarded() || jroot.is_null()) {
-//            Logger::print(Logger::type::ERROR, "'" + url + "' got an empty or invalid JSON!");
+//            Logger::print(Logger::type::T_ERROR, "'" + url + "' got an empty or invalid JSON!");
 //			return out;
 //		}
 //
 //		version_name_back = jroot["name"].get<std::string>() + "_id" + std::to_string(jroot["id"].get<unsigned long long>());
-//		Logger::print(Logger::type::DEBUG, "Versioning for it: '" + version_name_back + "'");
+//		Logger::print(Logger::type::T_DEBUG, "Versioning for it: '" + version_name_back + "'");
 //
 //		if (keys_to_find == 0) return {};		
 //
 //		for (const auto& asset : jroot["assets"]) {
 //			const auto name = asset["name"].get<std::string>();
-//			Logger::print(Logger::type::DEBUG, "- On asset '" + name + "'...");
+//			Logger::print(Logger::type::T_DEBUG, "- On asset '" + name + "'...");
 //
 //			for (const auto& key : keys) {
 //				if (name.find(key) != std::string::npos) {
 //					const std::string val = asset["browser_download_url"];
 //					out[key] = val;
-//					Logger::print(Logger::type::DEBUG, "--> Found JSON key match '" + name + "' => '" + val + "'");
+//					Logger::print(Logger::type::T_DEBUG, "--> Found JSON key match '" + name + "' => '" + val + "'");
 //					break;
 //				}
 //			}
@@ -271,12 +271,12 @@
 //			if (out.size() >= keys_to_find) break;
 //		}
 //
-//		Logger::print(Logger::type::DEBUG, "End of gather Github assets from '" + url + "'.");
+//		Logger::print(Logger::type::T_DEBUG, "End of gather Github assets from '" + url + "'.");
 //		return out;
 //	};
 //
 //
-//	Logger::print(Logger::type::DEBUG, "Working on 7-zip link related stuff...");
+//	Logger::print(Logger::type::T_DEBUG, "Working on 7-zip link related stuff...");
 //	// ==== 7zip all ==== //
 //	{
 //
@@ -296,10 +296,10 @@
 //		m_dl.m_7z = res[g_7zz_link_contains];
 //#endif
 //	}
-//	Logger::print(Logger::type::DEBUG, "Ended 7-zip link related stuff.");
+//	Logger::print(Logger::type::T_DEBUG, "Ended 7-zip link related stuff.");
 //
 //	// ==== FFMPEG all ==== //
-//	Logger::print(Logger::type::DEBUG, "Working on FFMPEG link related stuff...");
+//	Logger::print(Logger::type::T_DEBUG, "Working on FFMPEG link related stuff...");
 //	{
 //
 //		auto res = github_get_assets_download_url(g_ffmpeg_gh_releases_page, {
@@ -308,10 +308,10 @@
 //
 //		m_dl.m_ffmpeg = res[g_ffmpeg_link_contains];
 //	}
-//	Logger::print(Logger::type::DEBUG, "Ended FFMPEG link related stuff.");
+//	Logger::print(Logger::type::T_DEBUG, "Ended FFMPEG link related stuff.");
 //
 //
-//	Logger::print(Logger::type::DEBUG, "Working on ImageMagick link related stuff...");
+//	Logger::print(Logger::type::T_DEBUG, "Working on ImageMagick link related stuff...");
 //	{
 //		github_get_assets_download_url(g_magick_gh_releases_page, {}, m_gh.m_magick);
 //	}
@@ -321,7 +321,7 @@
 //	{
 //        std::string magick_body;
 //        if (!_download_to(g_magick_download_ftp_listing_url, magick_body)) {
-//            Logger::print(Logger::type::ERROR, "Cannot fetch ImageMagick version!");
+//            Logger::print(Logger::type::T_ERROR, "Cannot fetch ImageMagick version!");
 //            return false;
 //        }
 //        
@@ -389,16 +389,16 @@
 //
 //		m_dl.m_magick = g_magick_download_base_url + std::string(reconst);
 //
-//        //Logger::print(Logger::type::DEBUG, "Fetched / rebuilt ImageMagick version: " + m_magick_latest_version);
-//        Logger::print(Logger::type::DEBUG, "Fetched / rebuilt ImageMagick link: " + m_dl.m_magick);
+//        //Logger::print(Logger::type::T_DEBUG, "Fetched / rebuilt ImageMagick version: " + m_magick_latest_version);
+//        Logger::print(Logger::type::T_DEBUG, "Fetched / rebuilt ImageMagick link: " + m_dl.m_magick);
 //	}
 //#else // linux
 //	{
 //		m_dl.m_magick = g_magick_download_static;
-//		Logger::print(Logger::type::DEBUG, "On linux ImageMagick has static link to download AppImage: " + m_dl.m_magick);
+//		Logger::print(Logger::type::T_DEBUG, "On linux ImageMagick has static link to download AppImage: " + m_dl.m_magick);
 //	}
 //#endif
-//	Logger::print(Logger::type::DEBUG, "Ended ImageMagick link related stuff.");
+//	Logger::print(Logger::type::T_DEBUG, "Ended ImageMagick link related stuff.");
 //
 //	return true;
 //}
@@ -426,7 +426,7 @@
 ////	const auto expected_cmd = (zip.rfind(".zip") == zip.length() - 4) ? get_7za_exe() : get_7z_exe();
 ////	const auto file_path = m_base_path + zip; // downloaded file
 ////
-////	Logger::print(Logger::type::DEBUG, "[PS>7z] Extracting '" + zip + "' with '" + expected_cmd + "'...");
+////	Logger::print(Logger::type::T_DEBUG, "[PS>7z] Extracting '" + zip + "' with '" + expected_cmd + "'...");
 ////
 ////	Lunaris::process_sync proc(
 ////		expected_cmd, { 
@@ -441,7 +441,7 @@
 ////
 ////	if (proc.has_read()) {
 ////		while (proc.has_read()) {
-////			Logger::print(Logger::type::DEBUG, "[PS>7z>Proc] " +  proc.read());
+////			Logger::print(Logger::type::T_DEBUG, "[PS>7z>Proc] " +  proc.read());
 ////			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 ////		}
 ////	}
@@ -449,7 +449,7 @@
 ////
 ////	while (proc.is_running()) std::this_thread::sleep_for(std::chrono::milliseconds(50));
 ////
-////	Logger::print(Logger::type::DEBUG, "[PS>7z] Ended extracting '" + zip + "'.");
+////	Logger::print(Logger::type::T_DEBUG, "[PS>7z] Ended extracting '" + zip + "'.");
 //}
 //
 //PathingStuff::PathingStuff()

@@ -7,9 +7,16 @@
 
 #include <nlohmann/json.hpp>
 
+#ifdef _WIN32
+#define RUN_AS_WIN // used for debugging on non windows too
+#endif
+//#define RUN_AS_WIN
+
+
 struct gh_auto_links {
 	std::string download;
 	std::string version;
+	std::string fpname;
 	std::unique_ptr<gh_auto_links> opt_dep;
 
 	void from_json(const nlohmann::json&);
@@ -22,24 +29,35 @@ class PathingStuff {
 
 	const gh_auto_links 
 		m_ffmpeg,
+#ifdef RUN_AS_WIN
 		m_7zip,
-		m_magisk;
+#endif
+		m_magick;
 
 	gh_auto_links
 		m_local_ffmpeg,
+#ifdef RUN_AS_WIN
 		m_local_7zip,
-		m_local_magisk;
+#endif
+		m_local_magick;
 
 	void load_local_configs();
-	void save_remote_configs();
+	bool save_remote_configs();
+
+	bool check_remote_is_good();
+	bool check_local_is_good();
+
+	void install_updates();
 public:
 	PathingStuff();
 
 	const std::string& get_base_path() const;
 
-	const gh_auto_links& get_own_magisk() const;
+	const gh_auto_links& get_own_magick() const;
 	const gh_auto_links& get_own_ffmpeg() const;
+#ifdef RUN_AS_WIN
 	const gh_auto_links& get_own_7zip() const;
+#endif
 };
 
 //class PathingStuff {
@@ -91,6 +109,6 @@ public:
 //};
 
 
-gh_auto_links get_magisk();
+gh_auto_links get_magick();
 gh_auto_links get_ffmpeg();
 gh_auto_links get_7zip();

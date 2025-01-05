@@ -8,4 +8,5 @@ project(VideoAndPhotoConverterCombo)
 add_subdirectory(project/cmd)
 
 # Linux: needs sudo apt install libxcursor-dev libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev libopengl-dev 
-add_subdirectory(project/gui)
+## commenting temporarily
+#add_subdirectory(project/gui)

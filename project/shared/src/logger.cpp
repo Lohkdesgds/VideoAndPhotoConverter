@@ -11,10 +11,10 @@ Logger::Logger()
 {
     m_redir = [](const Logger::type& t, const std::string& s) {
         switch(t) {
-        case type::INFO:  std::cout << "[INFO] "  << s << std::endl; break;
-        case type::WARN:  std::cout << "[WARN] "  << s << std::endl; break;
-        case type::ERROR: std::cout << "[ERROR] " << s << std::endl; break;
-        case type::DEBUG: std::cout << "[DEBUG] " << s << std::endl; break;
+        case type::T_INFO:  std::cout << "[INFO] "  << s << std::endl; break;
+        case type::T_WARN:  std::cout << "[WARN] "  << s << std::endl; break;
+        case type::T_ERROR: std::cout << "[ERROR] " << s << std::endl; break;
+        case type::T_DEBUG: std::cout << "[DEBUG] " << s << std::endl; break;
         }
     };
 }

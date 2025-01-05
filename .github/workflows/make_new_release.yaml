@@ -18,7 +18,7 @@ jobs:
   build:
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.name }}
-    continue-on-error: true
+    #continue-on-error: true
     strategy:
       matrix:
         config:

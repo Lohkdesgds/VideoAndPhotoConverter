@@ -6,9 +6,9 @@
 
 class Logger {
 public:
-    enum class type { INFO, WARN, ERROR, DEBUG };
+    enum class type { T_INFO, T_WARN, T_ERROR, T_DEBUG };
 private:
-    type m_depth = type::ERROR;
+    type m_depth = type::T_ERROR;
     std::function<void(const type&, const std::string&)> m_redir;
     std::mutex m_mtx;
 
@@ -21,3 +21,10 @@ public:
 
     static void print(const type&, const std::string&);
 };
+
+#if !defined(__PRETTY_FUNCTION__) && !defined(__GNUC__)
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
+
+
+#define DBGS(...) Logger::print(Logger::type::T_DEBUG, std::string(__PRETTY_FUNCTION__) + " > " + (__VA_ARGS__));

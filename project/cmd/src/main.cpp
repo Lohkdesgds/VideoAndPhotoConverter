@@ -4,21 +4,21 @@
 
 int main()
 {
-    //Logger::set_depth(Logger::type::DEBUG);
+    Logger::set_depth(Logger::type::T_DEBUG);
     
     PathingStuff ps;
 
-    std::cout << "Current path: " << ps.get_base_path() << std::endl;
-
-    const auto& gm = ps.get_own_magisk();
-    const auto& gf = ps.get_own_ffmpeg();
-    const auto& g7 = ps.get_own_7zip();
-
-    std::cout << "Magisk: v='" << gm.version << "'; l='" << gm.download << "'" << std::endl;
-    std::cout << "FFMPEG: v='" << gf.version << "'; l='" << gf.download << "'" << std::endl;
-    std::cout << "7zip:   v='" << g7.version << "'; l='" << g7.download << "'" << std::endl;
-    if (g7.opt_dep) 
-        std::cout << "7zr:     v='" << g7.opt_dep->version << "'; l='" << g7.opt_dep->download << "'" << std::endl;
+    //std::cout << "Current path: " << ps.get_base_path() << std::endl;
+    //
+    //const auto& gm = ps.get_own_magick();
+    //const auto& gf = ps.get_own_ffmpeg();
+    //const auto& g7 = ps.get_own_7zip();
+    //
+    //std::cout << "Magick: v='" << gm.version << "'; l='" << gm.download << "'" << std::endl;
+    //std::cout << "FFMPEG: v='" << gf.version << "'; l='" << gf.download << "'" << std::endl;
+    //std::cout << "7zip:   v='" << g7.version << "'; l='" << g7.download << "'" << std::endl;
+    //if (g7.opt_dep) 
+    //    std::cout << "7zr:     v='" << g7.opt_dep->version << "'; l='" << g7.opt_dep->download << "'" << std::endl;
 
 //    std::cout << "Two examples of calls, one simple GET and other POST with GET params, header and post body" << std::endl;
 //
