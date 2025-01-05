@@ -79,9 +79,6 @@ void PathingStuff::load_local_configs()
 	}
 
 	if (j.contains("ffmpeg")) 	m_local_ffmpeg.from_json(j["ffmpeg"]);
-#ifdef RUN_AS_WIN
-	if (j.contains("7zip")) 	m_local_7zip.from_json(j["7zip"]);
-#endif
 	if (j.contains("magick")) 	m_local_magick.from_json(j["magick"]);
 
 	DBGS("Done!");
@@ -94,9 +91,6 @@ bool PathingStuff::save_remote_configs()
 	nlohmann::json j;
 
 	j["ffmpeg"] = m_ffmpeg.to_json();
-#ifdef RUN_AS_WIN
-	j["7zip"] 	= m_7zip.to_json();
-#endif
 	j["magick"] = m_magick.to_json();
 
 	DBGS("Opening file to write...");
@@ -118,9 +112,6 @@ bool PathingStuff::check_remote_is_good()
 {
 	return
 		!m_ffmpeg.version.empty() && !m_ffmpeg.download.empty() &&
-#ifdef RUN_AS_WIN
-		!m_7zip.version.empty()   && !m_7zip.download.empty() &&
-#endif
 		!m_magick.version.empty() && !m_magick.download.empty();
 }
 
@@ -128,40 +119,11 @@ bool PathingStuff::check_local_is_good()
 {
 	return
 		!m_local_ffmpeg.version.empty() && !m_local_ffmpeg.download.empty() &&
-#ifdef RUN_AS_WIN
-		!m_local_7zip.version.empty() 	&& !m_local_7zip.download.empty() &&
-#endif
 		!m_local_magick.version.empty() && !m_local_magick.download.empty();
 }
 
 void PathingStuff::install_updates()
 {
-#ifdef RUN_AS_WIN
-	if (m_local_7zip.version != m_7zip.version) {
-		DBGS("7zip has update! Downloading it...");
-
-		if (!m_7zip.opt_dep) {
-			Logger::print(Logger::type::T_ERROR, "Something very wrong happened on fetch links. 7zip second link is null!");
-			throw std::runtime_error("7zip second link is null!");
-		}
-
-		DBGS("Downloading " + m_7zip.opt_dep->download + "...");
-		if (const long res = down_fp(m_7zip.opt_dep->download, m_base_path + m_7zip.opt_dep->fpname); res < 200 || res > 300) {
-			Logger::print(Logger::type::T_ERROR, "Could not correctly download " +
-				std::string(m_7zip.opt_dep->fpname) + ". Error HTTP " + std::to_string(res));
-			throw std::runtime_error("Failed downloading " + std::string(m_7zip.opt_dep->fpname));
-		}
-		DBGS("Downloading " + m_7zip.download + "...");
-		if (const long res = down_fp(m_7zip.download, m_base_path + m_7zip.fpname); res < 200 || res > 300) {
-			Logger::print(Logger::type::T_ERROR, "Could not correctly download " +
-				std::string(m_7zip.fpname) + ". Error HTTP " + std::to_string(res));
-			throw std::runtime_error("Failed downloading " + std::string(m_7zip.fpname));
-		}
-		// THEN NEEDS EXTRACT ON WIN
-	}
-	else DBGS("7zip is up to date.");
-#endif
-
 	if (m_local_ffmpeg.version != m_ffmpeg.version) {
 		DBGS("FFMPEG has update! Downloading it...");
 
@@ -173,11 +135,19 @@ void PathingStuff::install_updates()
 		}
 
 		DBGS("Extracting FFMPEG...");
+		std::filesystem::create_directories(m_base_path + path_ffmpeg);
 
 #ifdef RUN_AS_WIN
-		// THEN NEEDS EXTRACT
+		Lunaris::process_sync proc("tar",
+			{
+				"xzfv",
+				m_base_path + m_ffmpeg.fpname,
+				"-C",
+				m_base_path + path_ffmpeg
+			}, Lunaris::process_sync::mode::READ
+		);
+
 #else
-		std::filesystem::create_directories(m_base_path + path_ffmpeg);
 		Lunaris::process_sync proc("/usr/bin/tar",
 			{
 				"-xvf",
@@ -186,7 +156,7 @@ void PathingStuff::install_updates()
 				m_base_path + path_ffmpeg
 			}, Lunaris::process_sync::mode::READ
 		);
-
+#endif
 		while (proc.is_running() || proc.has_read()) {
 			while (proc.has_read()) {
 				DBGS("TAR: " + proc.read());
@@ -196,7 +166,6 @@ void PathingStuff::install_updates()
 		}
 
 		DBGS("Done extracting FFMPEG.");
-#endif
 	}
 	else DBGS("FFMPEG is up to date.");
 
@@ -220,11 +189,7 @@ void PathingStuff::install_updates()
 }
 
 PathingStuff::PathingStuff()
-	: m_base_path(get_app_path()), m_ffmpeg(get_ffmpeg()),
-#ifdef RUN_AS_WIN
-		m_7zip(get_7zip()),
-#endif
-		m_magick(get_magick())
+	: m_base_path(get_app_path()), m_ffmpeg(get_ffmpeg()), m_magick(get_magick())
 {	
 	DBGS("Setting up paths...");
 	std::filesystem::create_directories(m_base_path);
@@ -261,12 +226,6 @@ const gh_auto_links& PathingStuff::get_own_ffmpeg() const
 {
 	return m_ffmpeg;
 }
-#ifdef RUN_AS_WIN
-const gh_auto_links& PathingStuff::get_own_7zip() const
-{
-	return m_7zip;
-}
-#endif
 
 
 
@@ -400,56 +359,6 @@ gh_auto_links get_ffmpeg()
 		ref.download = it->second;
 		DBGS("Got FFMPEG url: " + ref.download);
 	}
-
-	return ref;
-}
-
-gh_auto_links get_7zip()
-{
-	constexpr char base_url[] = "https://api.github.com/repos/ip7z/7zip/releases/latest";
-	gh_auto_links ref;
-
-	DBGS("Requesting latest versions on remote...");
-#ifdef RUN_AS_WIN
-	ref.opt_dep = std::make_unique<gh_auto_links>();
-
-	constexpr char key_7z[] = "-extra.7z"; // complete package
-	constexpr char key_7zr[] = "7zr.exe"; // only works with .7z
-
-	constexpr char fpname_zip_7z[] = "7zip.7z";
-	constexpr char fpname_7zr_exe[] = "7zr.exe";
-
-	const auto res = gh_asset_and_name(base_url, { 
-		key_7z, key_7zr
-	 }, ref.version);
-
-	DBGS("Got version: " + ref.version);
-
-	if (const auto it = res.find(key_7z); it != res.end()) {
-		ref.download = it->second;
-		ref.fpname = fpname_zip_7z;
-		DBGS("Got 7zip url: " + ref.download);
-	}
-	if (const auto it = res.find(key_7zr); it != res.end()) {
-		ref.opt_dep->download = it->second;
-		ref.opt_dep->fpname = fpname_7zr_exe;
-		ref.opt_dep->version = ref.version;
-		DBGS("Got 7zr url: " + ref.opt_dep->download);
-	}
-#else
-	throw std::runtime_error("Actually, there's no need to download 7zip on linux! You don't want this to be called.");
-//	constexpr char key_7z[] = "-linux-x64.tar.xz"; // complete package
-//	const auto res = gh_asset_and_name(base_url, { 
-//		key_7z
-//	 }, ref.version);
-//
-//	DBGS("Got version: " + ref.version);
-//
-//	if (const auto it = res.find(key_7z); it != res.end()) {
-//		ref.download = it->second;
-//		DBGS("Got 7zip url: " + ref.download);
-//	}
-#endif
 
 	return ref;
 }

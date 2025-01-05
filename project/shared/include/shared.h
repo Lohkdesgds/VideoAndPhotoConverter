@@ -29,16 +29,10 @@ class PathingStuff {
 
 	const gh_auto_links 
 		m_ffmpeg,
-#ifdef RUN_AS_WIN
-		m_7zip,
-#endif
 		m_magick;
 
 	gh_auto_links
 		m_local_ffmpeg,
-#ifdef RUN_AS_WIN
-		m_local_7zip,
-#endif
 		m_local_magick;
 
 	void load_local_configs();
@@ -55,9 +49,6 @@ public:
 
 	const gh_auto_links& get_own_magick() const;
 	const gh_auto_links& get_own_ffmpeg() const;
-#ifdef RUN_AS_WIN
-	const gh_auto_links& get_own_7zip() const;
-#endif
 };
 
 //class PathingStuff {
@@ -111,4 +102,3 @@ public:
 
 gh_auto_links get_magick();
 gh_auto_links get_ffmpeg();
-gh_auto_links get_7zip();
