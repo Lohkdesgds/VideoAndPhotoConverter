@@ -5,7 +5,17 @@
 int main()
 {
     Logger::set_depth(Logger::type::T_DEBUG);
-    
+
+    //const auto ls = [](const directory_parsed& arg) {
+    //    for(const auto& i : arg.directories) std::cout << "- D: " << i << std::endl;
+    //    for(const auto& i : arg.files) std::cout << "- F: " << i << std::endl;
+    //};
+    //
+    //directory_parsed dp(".");
+    //ls(dp);
+    //ls(dp["build"]);
+
+
     PathingStuff ps;
 
     //std::cout << "Current path: " << ps.get_base_path() << std::endl;

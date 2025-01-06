@@ -23,6 +23,17 @@ struct gh_auto_links {
 	nlohmann::json to_json() const;
 };
 
+struct directory_parsed {
+	const std::string raw_current_path;
+	std::vector<std::string> files;
+	std::vector<std::string> directories;
+
+	std::string find_dir(const std::string&) const;
+	std::string find_file(const std::string&) const;
+	directory_parsed operator[](const std::string&) const;
+	directory_parsed(const std::string&);
+};
+
 
 class PathingStuff {
 	const std::string m_base_path;
@@ -34,6 +45,10 @@ class PathingStuff {
 	gh_auto_links
 		m_local_ffmpeg,
 		m_local_magick;
+
+	std::string 
+		m_path_ffmpeg,
+		m_path_magick;
 
 	void load_local_configs();
 	bool save_remote_configs();

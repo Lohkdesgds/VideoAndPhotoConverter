@@ -25,6 +25,9 @@
 
 constexpr char cfg_name[] = "installed.json";
 constexpr char path_ffmpeg[] = "ffmpeg";
+#ifdef RUN_AS_WIN
+constexpr char path_magick[] = "imagemagick";
+#endif
 
 
 /* = = = = = = RAW CALLS = = = = = = */
@@ -54,6 +57,54 @@ nlohmann::json gh_auto_links::to_json() const
 		j["opt_dep"] = opt_dep->to_json();
 	}
 	return j;
+}
+
+
+
+//bool directory_parsed::has_dir(const std::string& s) const
+//{
+//	for(const auto& i : directories) {
+//		if (const auto f = i.find(s); f == 0) return true;
+//	}
+//	return false;
+//}
+//
+//bool directory_parsed::has_file(const std::string& s) const
+//{
+//	for(const auto& i : files) {
+//		if (const auto f = i.find(s); f == 0) return true;
+//	}
+//	return false;
+//}
+
+std::string directory_parsed::find_dir(const std::string& s) const
+{
+	for(const auto& i : directories) {
+		if (const auto f = i.find(s); f != std::string::npos) return i;
+	}
+	return {};
+}
+std::string directory_parsed::find_file(const std::string& s) const
+{
+	for(const auto& i : files) {
+		if (const auto f = i.find(s); f != std::string::npos) return i;
+	}
+	return {};
+}
+
+directory_parsed directory_parsed::operator[](const std::string& path) const 
+{
+	return directory_parsed(raw_current_path + (path.find(SLASH) == 0 ? "" : SLASH) + path);
+}
+
+directory_parsed::directory_parsed(const std::string& path)
+	: raw_current_path(std::filesystem::canonical(std::filesystem::directory_entry(path)))
+{
+	for (const auto& entry : std::filesystem::directory_iterator(raw_current_path))
+	{
+		if (entry.is_directory()) directories.push_back(entry.path().string().substr(raw_current_path.length() + 1));
+		else if (entry.is_regular_file()) files.push_back(entry.path().string().substr(raw_current_path.length() + 1));
+	}
 }
 
 
@@ -157,14 +208,17 @@ void PathingStuff::install_updates()
 			}, Lunaris::process_sync::mode::READ
 		);
 #endif
-		while (proc.is_running() || proc.has_read()) {
-			while (proc.has_read()) {
-				DBGS("TAR: " + proc.read());
-				std::this_thread::sleep_for(std::chrono::milliseconds(10));
-			}
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
+		while (proc.is_running()) std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
+		directory_parsed dp(m_base_path + path_ffmpeg);
+		const auto root = dp[dp.find_dir("ffmpeg")]["bin"];
+		const auto search = root.find_file("ffmpeg");
+
+		if (!search.empty()) {
+			m_path_ffmpeg = root.raw_current_path + "/" + search;
+			DBGS("Found FFMPEG: " + m_path_ffmpeg);
+		}
+		
 		DBGS("Done extracting FFMPEG.");
 	}
 	else DBGS("FFMPEG is up to date.");
@@ -180,9 +234,35 @@ void PathingStuff::install_updates()
 		}
 
 #ifdef RUN_AS_WIN
-		// THEN NEEDS EXTRACT
+		DBGS("Extracting FFMPEG...");
+		std::filesystem::create_directories(m_base_path + path_magick);
+
+		Lunaris::process_sync proc("tar",
+			{
+				"xzfv",
+				m_base_path + m_ffmpeg.fpname,
+				"-C",
+				m_base_path + path_magick
+			}, Lunaris::process_sync::mode::READ
+		);
+
+		while (proc.is_running()) std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+		directory_parsed dp(m_base_path + path_magick);
+		const auto root = dp[dp.find_dir("ImageMagick")];
+		const auto search = root.find_file("agick.exe");
+
+		if (!search.empty()) {
+			m_path_magick = dp.raw_current_path + "/" + search;
+			DBGS("Found ImageMagick: " + m_path_magick);
+		}
+		
+		DBGS("Done extracting ImageMagick.");
+
 #else
 		DBGS("ImageMagick ready.");
+		m_path_magick = m_base_path + m_magick.fpname;
+		DBGS("ImageMagick at: " + m_path_magick);
 #endif
 	}
 	else DBGS("ImageMagick is up to date.");
