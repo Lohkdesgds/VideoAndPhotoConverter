@@ -234,13 +234,13 @@ void PathingStuff::install_updates()
 		}
 
 #ifdef RUN_AS_WIN
-		DBGS("Extracting FFMPEG...");
+		DBGS("Extracting ImageMagick...");
 		std::filesystem::create_directories(m_base_path + path_magick);
 
 		Lunaris::process_sync proc("tar",
 			{
 				"xzfv",
-				m_base_path + m_ffmpeg.fpname,
+				m_base_path + m_magick.fpname,
 				"-C",
 				m_base_path + path_magick
 			}, Lunaris::process_sync::mode::READ
