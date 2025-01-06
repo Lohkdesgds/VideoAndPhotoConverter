@@ -98,7 +98,7 @@ directory_parsed directory_parsed::operator[](const std::string& path) const
 }
 
 directory_parsed::directory_parsed(const std::string& path)
-	: raw_current_path(std::filesystem::canonical(std::filesystem::directory_entry(path)))
+	: raw_current_path(std::filesystem::canonical(std::filesystem::directory_entry(path)).string())
 {
 	for (const auto& entry : std::filesystem::directory_iterator(raw_current_path))
 	{
