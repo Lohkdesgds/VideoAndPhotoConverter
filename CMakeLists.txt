@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
 
-#set(VCPKG_VERSION latest)
-#include(vcpkg_integration/vcpkg.cmake)
+if (MSVC)
+    set(CMAKE_USER_MAKE_RULES_OVERRIDE
+    ${CMAKE_CURRENT_SOURCE_DIR}/msvc_overrides/c_flag_overrides.cmake)
+    set(CMAKE_USER_MAKE_RULES_OVERRIDE_CXX
+    ${CMAKE_CURRENT_SOURCE_DIR}/msvc_overrides/cxx_flag_overrides.cmake)
+endif()
 
 project(VideoAndPhotoConverterCombo)
 
