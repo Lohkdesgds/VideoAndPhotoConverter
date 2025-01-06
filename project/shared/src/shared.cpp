@@ -253,7 +253,7 @@ void PathingStuff::install_updates()
 		const auto search = root.find_file("agick.exe");
 
 		if (!search.empty()) {
-			m_path_magick = dp.raw_current_path + SLASH + search;
+			m_path_magick = root.raw_current_path + SLASH + search;
 			DBGS("Found ImageMagick: " + m_path_magick);
 		}
 		
