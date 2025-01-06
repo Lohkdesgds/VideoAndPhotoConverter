@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
+# Did not work (?)
 if (MSVC)
     set(CMAKE_USER_MAKE_RULES_OVERRIDE
     ${CMAKE_CURRENT_SOURCE_DIR}/msvc_overrides/c_flag_overrides.cmake)

@@ -35,7 +35,7 @@ jobs:
           sudo apt install -y libxcursor-dev libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev libopengl-dev libogg-dev libvorbis-dev libflac-dev
 
       - name: Build
-        uses: LunarisLib/actions/CMake@master
+        uses: LunarisLib/actions/CMake@experimental
         with:
           artifact_name: ${{ matrix.config.os }}_PROJECT
           use_vcpkg: 'true'
