@@ -1,7 +1,7 @@
 #include "ffmpeg.h"
 
 #include <Lunaris/Process/process.h>
-
+#include <logger.h>
 
 FFMPEG::FFMPEG(const PathingStuff& pathing)
 	: m_pathing(pathing)
@@ -10,13 +10,25 @@ FFMPEG::FFMPEG(const PathingStuff& pathing)
 
 void FFMPEG::call(const std::vector<std::string>& cmds) const
 {
-	Lunaris::process_sync proc(m_pathing.get_ffmpeg_exe(), cmds, Lunaris::process_sync::mode::READ);
+	const auto& path = m_pathing.get_ffmpeg_exe();
+
+	DBGS("_ convert call: " + path);
+	for(const auto& i : cmds)
+		DBGS("_ -> param: " + i);
+
+	Lunaris::process_sync proc(path, cmds, Lunaris::process_sync::mode::READ);
 	while (proc.is_running()) std::this_thread::sleep_for(std::chrono::milliseconds(20));
 }
 
 void FFMPEG::call(const std::vector<std::string>& cmds, const std::function<void(const std::string&)>& out) const
 {
-	Lunaris::process_sync proc(m_pathing.get_ffmpeg_exe(), cmds, Lunaris::process_sync::mode::READ);
+	const auto& path = m_pathing.get_ffmpeg_exe();
+
+	DBGS("_ convert call: " + path);
+	for(const auto& i : cmds)
+		DBGS("_ -> param: " + i);
+
+	Lunaris::process_sync proc(path, cmds, Lunaris::process_sync::mode::READ);
 
 	while (proc.is_running() || proc.has_read()) {
 		while (proc.has_read()) {

@@ -59,7 +59,7 @@ bool File::move_to_trash() const
 {	
 	std::error_code ec;
 	const std::string full_path = get_trash_path();
-	const std::string only_dirs = full_path.substr(0, full_path.rfind("\\"));
+	const std::string only_dirs = full_path.substr(0, full_path.rfind(SLASH));
 	std::filesystem::create_directories(only_dirs, ec);
 	if (ec) return false;
 	std::filesystem::rename(m_path, full_path, ec);
@@ -76,7 +76,12 @@ std::string File::get_trash_path() const
 	//const size_t p = m_path.find(":\\");
 	//const std::string drive = m_path.substr(0, p + 2);
 	//const std::string remaining_path = m_path.substr(p + 2);
-	return trash_move_folder_name + m_path;
+	std::string cpy = trash_move_folder_name + std::string(SLASH) + m_path;
+
+	for(auto& i : cpy)
+		if (i == ':') i = '_';
+		
+	return cpy;
 }
 
 VideoFile::VideoFile(const std::string& path, const FFMPEG& ffmpeg, const std::shared_ptr<std::unique_ptr<Parameters>>& parameters)
