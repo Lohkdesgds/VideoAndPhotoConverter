@@ -156,17 +156,17 @@ bool PathingStuff::check_remote_is_good()
 {
 	return
 		!m_ffmpeg.version.empty() && !m_ffmpeg.download.empty() &&
-		!m_magick.version.empty() && !m_magick.download.empty() &&
-		!m_path_ffmpeg.empty() && !m_path_magick.empty() &&
-		std::filesystem::exists(m_path_ffmpeg) &&
-		std::filesystem::exists(m_path_magick);
+		!m_magick.version.empty() && !m_magick.download.empty();
 }
 
 bool PathingStuff::check_local_is_good()
 {
 	return
 		!m_local_ffmpeg.version.empty() && !m_local_ffmpeg.download.empty() &&
-		!m_local_magick.version.empty() && !m_local_magick.download.empty();
+		!m_local_magick.version.empty() && !m_local_magick.download.empty() &&
+		!m_path_ffmpeg.empty() && !m_path_magick.empty() &&
+		std::filesystem::exists(m_path_ffmpeg) &&
+		std::filesystem::exists(m_path_magick);
 }
 
 void PathingStuff::install_updates()
@@ -291,6 +291,8 @@ void PathingStuff::install_updates()
 		}
 	}
 #endif
+	m_local_ffmpeg.from_json(m_ffmpeg.to_json()); // easier
+	m_local_magick.from_json(m_magick.to_json()); // easier
 }
 
 PathingStuff::PathingStuff()
@@ -304,6 +306,13 @@ PathingStuff::PathingStuff()
 	if (check_remote_is_good()) {
 		DBGS("Installing updates or missing files (based on config)...");
 		install_updates();
+		DBGS("Testing install...");
+		if (!check_local_is_good()) {
+			Logger::print(Logger::type::T_ERROR, "Local install failed. Try again? Resetting config for you...");
+			std::filesystem::remove_all(m_base_path);
+			throw std::runtime_error("Installation wen't badly!");
+		}
+
 		DBGS("Saving current state...");
 		save_remote_configs();
 		DBGS("Done.");
@@ -311,7 +320,8 @@ PathingStuff::PathingStuff()
 	else {
 		DBGS("Checking if there is local content...");
 		if (!check_local_is_good()) {
-			Logger::print(Logger::type::T_ERROR, "Remote is offline and there is no local stored configuration! Cannot continue!");
+			Logger::print(Logger::type::T_ERROR, "Remote is offline and there is no local stored configuration! Cannot continue! Resetting config for you...");
+			std::filesystem::remove_all(m_base_path);
 			throw std::runtime_error("Remote is offline and there is no local stored configuration!");
 		}
 		DBGS("There is local content. Hoping that this is enough.");
