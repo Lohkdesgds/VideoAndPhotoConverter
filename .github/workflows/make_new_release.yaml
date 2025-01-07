@@ -9,7 +9,12 @@ on:
         required: false
         default: 'true' # change back later (to false)
       bump_type:
-        description: What to bump
+        description: What to bump first (empty to ignore)
+        type: string
+        required: false
+        default: '' # change back later (to 'm')
+      second_bump_type:
+        description: Real bump here, like first major on the other, then consider release candidate for it here in this one.
         type: string
         required: false
         default: 'snapshot' # change back later (to 'm')
@@ -46,11 +51,18 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Versioning
-        id: versioning
+      - name: Versioning (pre-bump)
+        if: ${{ inputs.bump_type != '' }}
         uses: LunarisLib/actions/Versioning@master
         with:
           kind: ${{ inputs.bump_type }}
+          project: VS_PROJECT # changing would break counting
+
+      - name: Versioning (target)
+        id: versioning
+        uses: LunarisLib/actions/Versioning@master
+        with:
+          kind: ${{ inputs.second_bump_type }}
           project: VS_PROJECT # changing would break counting
           
       - name: Publish
