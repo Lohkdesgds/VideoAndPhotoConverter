@@ -37,6 +37,9 @@ long down_fp(const std::string& url, const std::string& fp);
 std::unordered_map<std::string, std::string> gh_asset_and_name(const std::string& url, const std::vector<std::string>& keys, std::string& version_name);
 std::string get_app_path();
 
+gh_auto_links get_magick();
+gh_auto_links get_ffmpeg();
+
 
 void gh_auto_links::from_json(const nlohmann::json& j)
 {
@@ -60,22 +63,6 @@ nlohmann::json gh_auto_links::to_json() const
 }
 
 
-
-//bool directory_parsed::has_dir(const std::string& s) const
-//{
-//	for(const auto& i : directories) {
-//		if (const auto f = i.find(s); f == 0) return true;
-//	}
-//	return false;
-//}
-//
-//bool directory_parsed::has_file(const std::string& s) const
-//{
-//	for(const auto& i : files) {
-//		if (const auto f = i.find(s); f == 0) return true;
-//	}
-//	return false;
-//}
 
 std::string directory_parsed::find_dir(const std::string& s) const
 {
@@ -132,6 +119,9 @@ void PathingStuff::load_local_configs()
 	if (j.contains("ffmpeg")) 	m_local_ffmpeg.from_json(j["ffmpeg"]);
 	if (j.contains("magick")) 	m_local_magick.from_json(j["magick"]);
 
+	if (j.contains("ffmpeg_path")) 	m_path_ffmpeg = j["ffmpeg_path"];
+	if (j.contains("magick_path")) 	m_path_magick = j["magick_path"];
+
 	DBGS("Done!");
 }
 
@@ -143,6 +133,9 @@ bool PathingStuff::save_remote_configs()
 
 	j["ffmpeg"] = m_ffmpeg.to_json();
 	j["magick"] = m_magick.to_json();
+	
+	j["ffmpeg_path"] = m_path_ffmpeg;
+	j["magick_path"] = m_path_magick;
 
 	DBGS("Opening file to write...");
 	std::fstream fp(m_base_path + cfg_name, std::ios::out | std::ios::binary);
@@ -163,7 +156,10 @@ bool PathingStuff::check_remote_is_good()
 {
 	return
 		!m_ffmpeg.version.empty() && !m_ffmpeg.download.empty() &&
-		!m_magick.version.empty() && !m_magick.download.empty();
+		!m_magick.version.empty() && !m_magick.download.empty() &&
+		!m_path_ffmpeg.empty() && !m_path_magick.empty() &&
+		std::filesystem::exists(m_path_ffmpeg) &&
+		std::filesystem::exists(m_path_magick);
 }
 
 bool PathingStuff::check_local_is_good()
@@ -209,7 +205,12 @@ void PathingStuff::install_updates()
 		);
 #endif
 		while (proc.is_running()) std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				
+		DBGS("Done extracting FFMPEG.");
+	}
+	else DBGS("FFMPEG is up to date.");
 
+	{
 		directory_parsed dp(m_base_path + path_ffmpeg);
 		const auto root = dp[dp.find_dir("ffmpeg")]["bin"];
 		const auto search = root.find_file("ffmpeg");
@@ -218,10 +219,14 @@ void PathingStuff::install_updates()
 			m_path_ffmpeg = root.raw_current_path + SLASH + search;
 			DBGS("Found FFMPEG: " + m_path_ffmpeg);
 		}
-		
-		DBGS("Done extracting FFMPEG.");
+		else {
+			Logger::print(Logger::type::T_ERROR, "Could not find FFMPEG. Erasing configs for next clean start. Please try again");
+			std::filesystem::remove_all(m_base_path);
+			throw std::runtime_error("Failed to find FFMPEG.");
+		}
 	}
-	else DBGS("FFMPEG is up to date.");
+
+
 
 	if (m_local_magick.version != m_magick.version) {
 		DBGS("ImageMagick has update! Downloading it...");
@@ -248,6 +253,18 @@ void PathingStuff::install_updates()
 
 		while (proc.is_running()) std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
+		
+		
+		DBGS("Done extracting ImageMagick.");
+
+#else
+		DBGS("ImageMagick at: " + m_path_magick);
+#endif
+	}
+	else DBGS("ImageMagick is up to date.");
+
+#ifdef RUN_AS_WIN
+	{
 		directory_parsed dp(m_base_path + path_magick);
 		const auto root = dp[dp.find_dir("ImageMagick")];
 		const auto search = root.find_file("agick.exe");
@@ -256,16 +273,24 @@ void PathingStuff::install_updates()
 			m_path_magick = root.raw_current_path + SLASH + search;
 			DBGS("Found ImageMagick: " + m_path_magick);
 		}
-		
-		DBGS("Done extracting ImageMagick.");
-
+		else {
+			Logger::print(Logger::type::T_ERROR, "Could not find ImageMagick. Erasing configs for next clean start. Please try again");
+			std::filesystem::remove_all(m_base_path);
+			throw std::runtime_error("Failed to find ImageMagick.");
+		}
+	}
 #else
+	{
 		DBGS("ImageMagick ready.");
 		m_path_magick = m_base_path + m_magick.fpname;
-		DBGS("ImageMagick at: " + m_path_magick);
-#endif
+
+		if (!std::filesystem::exists(m_path_magick)) {
+			Logger::print(Logger::type::T_ERROR, "Could not find FFMPEG. Erasing configs for next clean start. Please try again");
+			std::filesystem::remove_all(m_base_path);
+			throw std::runtime_error("Failed to find FFMPEG.");
+		}
 	}
-	else DBGS("ImageMagick is up to date.");
+#endif
 }
 
 PathingStuff::PathingStuff()
@@ -293,18 +318,14 @@ PathingStuff::PathingStuff()
 	}
 }
 
-const std::string& PathingStuff::get_base_path() const
+const std::string& PathingStuff::get_ffmpeg_exe() const
 {
-	return m_base_path;
+	return m_path_ffmpeg;
 }
 
-const gh_auto_links& PathingStuff::get_own_magick() const
+const std::string& PathingStuff::get_magick_exe() const
 {
-	return m_magick;
-}
-const gh_auto_links& PathingStuff::get_own_ffmpeg() const
-{
-	return m_ffmpeg;
+	return m_path_magick;
 }
 
 

@@ -13,3 +13,6 @@
 [submodule "project/shared/deps/json"]
 	path = project/shared/deps/json
 	url = https://www.github.com/nlohmann/json
+[submodule "project/cmd/deps/Lunaris/Console"]
+	path = project/cmd/deps/Lunaris/Console
+	url = https://www.github.com/LunarisLib/Lunaris-Console
