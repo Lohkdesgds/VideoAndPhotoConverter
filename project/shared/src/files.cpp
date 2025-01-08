@@ -137,7 +137,7 @@ void ImageFile::convert() const
 	params.push_back("\"" + m_path + common_converted_end_filter + m_ext + "\"");
 
 	m_magick.call(params, [&](const std::string& l) {
-		Logger::print(Logger::type::T_DEBUG, "FFMPEG: " + l);
+		Logger::print(Logger::type::T_DEBUG, "MAGICK: " + l);
 	});
 }
 

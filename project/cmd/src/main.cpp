@@ -13,7 +13,7 @@ using namespace Lunaris;
 int main(int argc, char* argv[])
 {
     int real_argc = argc - 1;
-    char** beg_argv = argv;
+    char** beg_argv = argv + 1;
 
     for(int p = 1; p < argc; ++p) {
         const char* param = argv[p];
